@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Joqueen - Home</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet" />
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+  
+  <style>
+    @keyframes bg-animate {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    @keyframes float {
+      0% { transform: translatey(0px); }
+      50% { transform: translatey(-15px); }
+      100% { transform: translatey(0px); }
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: linear-gradient(-45deg, #f079ca, #000000, #000000, #f079ca);
+      background-size: 400% 400%;
+      animation: bg-animate 15s ease infinite;
+      font-family: 'Poppins', sans-serif;
+      color: #EDEDED;
+      overflow-x: hidden;
+      user-select: none;
+    }
+
+    #loader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #23272A;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      transition: opacity 0.6s ease;
+    }
+
+    .loader-spinner {
+      border: 8px solid rgba(255, 255, 255, 0.1);
+      border-top: 8px solid #ffffff;
+      border-radius: 50%;
+      width: 80px;
+      height: 80px;
+      animation: spin 1.2s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      width: 240px;
+      background: rgba(44, 47, 51, 0);
+      backdrop-filter: blur(16px);
+      border-right: 1px solid rgba(255, 255, 255, 0.05);
+      color: #fff;
+      padding: 1.5rem 1rem;
+      transition: width 0.3s ease;
+      z-index: 1000;
+      box-shadow: 5px 0 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .sidebar.collapsed {
+      width: 84px;
+    }
+
+    .sidebar-header {
+      font-size: 1.7rem;
+      font-weight: bold;
+      margin-bottom: 2.5rem;
+      text-shadow: 0 0 10px #ffffff;
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .sidebar.collapsed .sidebar-header .link-text,
+    .sidebar.collapsed .menu-text {
+      display: none;
+    }
+
+    .sidebar-menu {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .sidebar-menu li {
+      margin-bottom: 1.2rem;
+    }
+
+    .sidebar-menu a {
+      color: #ffffffcc;
+      text-decoration: none;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 0.75rem 1rem;
+      border-radius: 12px;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .sidebar-menu a:hover {
+      background: rgba(255, 255, 255, 0);
+      color: #ffffff;
+      transform: translateX(5px);
+      box-shadow: 0 0 12px rgba(255, 255, 255, 0.4);
+    }
+
+    .sidebar-menu a i {
+      font-size: 1.2rem;
+      transition: transform 0.3s;
+    }
+
+    .sidebar-menu a:hover i {
+      transform: scale(1.2);
+    }
+
+    .toggle-btn {
+      position: absolute;
+      top: 1.2rem;
+      transition: left 0.3s ease;
+    }
+
+    .sidebar.collapsed ~ .toggle-btn {
+      left: 70px;
+    }
+
+    .sidebar:not(.collapsed) ~ .toggle-btn {
+      left: 220px;
+    }
+
+    .sidebar:not(.collapsed) ~ .header,
+    .sidebar:not(.collapsed) ~ .main-content {
+      margin-left: 220px;
+      transition: margin-left 0.3s ease;
+    }
+
+    .sidebar.collapsed ~ .header,
+    .sidebar.collapsed ~ .main-content {
+      margin-left: 60px;
+      transition: margin-left 0.3s ease;
+    }
+
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem 3rem;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(10px);
+      position: relative;
+      z-index: 10;
+    }
+
+    .logo {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #fff;
+      text-shadow: 0 0 10px #fefefe;
+      cursor: pointer;
+    }
+
+    .main-content {
+      text-align: center;
+      margin-top: 6rem;
+      opacity: 0;
+      transition: opacity 0.6s ease;
+      position: relative;
+      z-index: 10;
+      padding: 0 1rem;
+    }
+
+    .main-content.show {
+      opacity: 1;
+    }
+
+    .floating-logo {
+      animation: float 3s ease-in-out infinite;
+      max-width: 600px;
+      width: 100%;
+      height: auto;
+      margin-top: 100px;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .logo-text {
+      margin-top: 20px;
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #ffffff;
+      text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+    }
+
+    #particle-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .logo-text {
+    margin-top: 20px;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #ffffff;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 1s ease, transform 1s ease;
+    }
+
+    .main-content.show .logo-text {
+    opacity: 1;
+    transform: translateY(0);
+    }
+
+  </style>
+</head>
+
+<body>
+  <canvas id="particle-canvas"></canvas>
+  
+  
+  <!-- Sidebar -->
+  <div id="sidebar" class="">
+  </div>
+
+  <!-- Toggle Sidebar -->
+  <button id="toggleSidebar" class="toggle-btn"></button>
+
+  <!-- Loader -->
+  <div id="loader">
+    <div class="loader-spinner"></div>
+  </div>
+
+  <!-- Header -->
+  <div class="header">
+    <div class="logo" id="logoToggle"></div>
+    <div class="header-buttons"></div>
+  </div>
+
+  <!-- Main Content (โลโก้ลอย + ข้อความ) -->
+<div class="main-content" id="main-content">
+  <img src="https://img5.pic.in.th/file/secure-sv1/imaged8a490f79b394046.png" alt="Logo" class="floating-logo">
+  <div class="logo-text">CHECK NAME LIST JOQUEEN</div>
+  <a href="namelist.html" class="btn btn-outline-light mt-4 px-4 py-2" style="font-weight: 600; font-size: 1.1rem;">
+    GO TO NAME LIST
+  </a>
+</div>
+
+  <!-- JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  
+
+  <script>
+
+    let mouse = {
+    x: null,
+    y: null,
+    radius: 150  // ระยะอิทธิพลของเมาส์
+    };
+
+    // อัพเดตตำแหน่งเมาส์
+    window.addEventListener('mousemove', function(event) {
+    mouse.x = event.x;
+    mouse.y = event.y;
+    });
+    window.addEventListener("load", function () {
+      const loader = document.getElementById("loader");
+      const content = document.getElementById("main-content");
+      loader.style.opacity = "0";
+      setTimeout(() => {
+        loader.style.display = "none";
+        content.classList.add("show");
+      }, 600);
+    });
+
+    const logo = document.getElementById('logoToggle');
+    const sidebar = document.getElementById('sidebar');
+    const linkText = sidebar.querySelector('.sidebar-header .link-text');
+
+    logo.addEventListener('click', () => {
+      sidebar.classList.toggle('collapsed');
+
+      if (!sidebar.classList.contains('collapsed')) {
+        linkText.textContent = '‎';
+      } else {
+        linkText.textContent = '';
+      }
+    });
+
+    // Particle Background
+    const canvas = document.getElementById('particle-canvas');
+    const ctx = canvas.getContext('2d');
+    let particlesArray;
+
+    function initCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+
+    window.addEventListener('resize', () => {
+      initCanvas();
+      initParticles();
+    });
+
+    // แก้ไขคลาส Particle
+class Particle {
+  constructor() {
+    this.x = Math.random() * canvas.width;
+    this.y = Math.random() * canvas.height;
+    this.radius = 1 + Math.random() * 3;
+    this.speedX = (Math.random() - 0.5) * 0.2;
+    this.speedY = (Math.random() - 0.5) * 0.2;
+    this.alpha = 0.1 + Math.random() * 0.3;
+  }
+
+  update() {
+    this.x += this.speedX;
+    this.y += this.speedY;
+
+    // เด้งเมื่อชนขอบ
+    if (this.x < 0 || this.x > canvas.width) this.speedX = -this.speedX;
+    if (this.y < 0 || this.y > canvas.height) this.speedY = -this.speedY;
+
+    // คำนวณระยะห่างกับเมาส์
+    let dx = this.x - mouse.x;
+    let dy = this.y - mouse.y;
+    let distance = Math.sqrt(dx * dx + dy * dy);
+
+    if (distance < mouse.radius) {
+      // แรงผลัก หรือดึงขึ้นอยู่กับความต้องการ
+      // ตัวอย่างนี้: แรงผลักให้ particle เคลื่อนออกจากเมาส์
+      let angle = Math.atan2(dy, dx);
+      let force = (mouse.radius - distance) / mouse.radius;
+      let forceX = Math.cos(angle) * force * 0.6;  // 0.6 = ความแรง
+      let forceY = Math.sin(angle) * force * 0.6;
+      this.speedX += forceX;
+      this.speedY += forceY;
+    } else {
+      // ถ้าอยู่นอกระยะอิทธิพล ลดความเร็วลงช้า ๆ
+      this.speedX *= 0.98;
+      this.speedY *= 0.98;
+    }
+
+    // จำกัดความเร็วไม่ให้เร็วเกินไป
+    const maxSpeed = 1;
+    this.speedX = Math.min(Math.max(this.speedX, -maxSpeed), maxSpeed);
+    this.speedY = Math.min(Math.max(this.speedY, -maxSpeed), maxSpeed);
+  }
+
+  draw() {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(255, 255, 255, ${this.alpha})`;
+    ctx.fill();
+  }
+}
+
+    function initParticles() {
+      particlesArray = [];
+      const numberOfParticles = Math.floor(canvas.width / 10);
+      for (let i = 0; i < numberOfParticles; i++) {
+        particlesArray.push(new Particle());
+      }
+    }
+
+   function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  
+  particlesArray.forEach(p => {
+    p.update();
+    p.draw();
+  });
+  
+  drawLines(); // ✨ เพิ่มเส้นเชื่อมตรงนี้
+  
+  requestAnimationFrame(animate);
+}
+
+
+    initCanvas();
+    initParticles();
+    animate();
+
+    function drawLines() {
+  for (let a = 0; a < particlesArray.length; a++) {
+    for (let b = a + 1; b < particlesArray.length; b++) {
+      const dx = particlesArray[a].x - particlesArray[b].x;
+      const dy = particlesArray[a].y - particlesArray[b].y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+
+      // ถ้าใกล้กว่า 120px → วาดเส้น
+      if (distance < 120) {
+        ctx.beginPath();
+        ctx.strokeStyle = `rgba(255, 255, 255, ${1 - distance / 120})`; // ยิ่งใกล้เส้นยิ่งชัด
+        ctx.lineWidth = 0.5;
+        ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
+        ctx.lineTo(particlesArray[b].x, particlesArray[b].y);
+        ctx.stroke();
+      }
+    }
+  }
+}
+
+  </script>
+</body>
+</html>
