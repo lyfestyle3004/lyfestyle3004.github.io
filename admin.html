@@ -68,23 +68,13 @@
                             <th class="px-6 py-4 text-center">การจัดการ</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-50">
-                        <tr class="hover:bg-orange-50/20 transition-colors">
-                            <td class="px-6 py-4">
-                                <div class="flex items-center">
-                                    <div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center text-orange-600 font-bold mr-3 shadow-inner">L</div>
-                                    <div class="text-sm font-bold text-gray-800">lindstelbla1</div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 text-xs font-mono text-gray-500">1452174765707235331</td>
-                            <td class="px-6 py-4 text-center">
-                                <div class="flex justify-center space-x-2">
-                                    <button onclick="handleAction('lindstelbla1', 'อนุมัติ')" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-sm transition-all active:scale-90">อนุมัติ</button>
-                                    <button onclick="handleAction('lindstelbla1', 'ปฏิเสธ')" class="bg-white border border-red-200 text-red-600 hover:bg-red-50 px-4 py-2 rounded-lg text-sm font-bold transition-all active:scale-90">ปฏิเสธ</button>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
+                    <tbody id="pendingTableBody" class="divide-y divide-gray-50">
+    <tr>
+        <td colspan="3" class="px-6 py-8 text-center text-gray-400 italic">
+            กำลังรอผู้เล่นส่งคำขอ...
+        </td>
+    </tr>
+</tbody>
                 </table>
             </div>
         </div>
