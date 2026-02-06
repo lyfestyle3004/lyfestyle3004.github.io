@@ -3,120 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>รอการยืนยันตัวตน | WHY CITY</title>
+    <title>สมาชิก | HIZ VERIFY</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <style>
-        body { font-family: 'Noto Sans Thai', sans-serif; }
+        body { font-family: 'Noto Sans Thai', sans-serif; background: #0f172a; }
+        .member-card { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); }
+        .glow-btn { box-shadow: 0 0 20px rgba(234, 88, 12, 0.4); }
     </style>
 </head>
-<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+<body class="min-h-screen flex flex-col items-center justify-center p-4 text-white">
 
-    <div class="max-w-md w-full bg-white rounded-2xl shadow-2xl overflow-hidden animate__animated animate__fadeIn">
-        <div class="bg-orange-600 px-6 py-8 text-center relative">
-            <div class="flex justify-center mb-4">
-                <div class="bg-white rounded-full p-3 inline-block shadow-lg animate__animated animate__pulse animate__infinite">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                </div>
+    <div class="max-w-md w-full member-card rounded-3xl p-8 border border-white/10 shadow-2xl animate__animated animate__fadeIn">
+        
+        <div class="text-center mb-8">
+            <div class="inline-block px-4 py-1 rounded-full bg-green-500/20 border border-green-500/50 text-green-400 text-xs font-bold uppercase tracking-widest mb-4">
+                Verified Citizen
             </div>
-            <h1 class="text-white text-2xl font-bold">รอการตรวจสอบ</h1>
-            <p class="text-orange-100 mt-2">โปรดรอแอดมินอนุมัติสิทธิ์เข้าสู่เซิร์ฟเวอร์</p>
+            <h1 class="text-3xl font-bold bg-gradient-to-r from-orange-400 to-red-500 bg-clip-text text-transparent">
+                HIZ VERIFY
+            </h1>
         </div>
 
-        <div class="px-6 py-6">
-            <div class="bg-orange-50 border border-orange-200 rounded-xl p-4 mb-6">
-                <div class="flex items-center mb-3">
-                    <div class="w-2.5 h-2.5 bg-orange-500 rounded-full animate-ping mr-2"></div>
-                    <h3 class="text-orange-800 font-bold text-lg">สถานะ: กำลังรอแอดมิน</h3>
-                </div>
-                <p class="text-orange-700 text-sm mb-4">ระบบได้รับคำขอของคุณแล้ว ข้อมูลของคุณจะแสดงในแผงควบคุมของแอดมินโดยอัตโนมัติ</p>
-                
-                <div class="bg-white/50 border border-orange-100 rounded-lg p-3">
-                    <p class="text-sm font-bold text-orange-800 mb-1 italic underline">คำแนะนำ:</p>
-                    <ul class="text-xs text-orange-700 space-y-1">
-                        <li>• ข้อมูลของคุณถูกส่งเข้าสู่ระบบ Firebase แล้ว</li>
-                        <li>• คุณสามารถแจ้งชื่อในห้อง Discord เพื่อความรวดเร็ว</li>
-                        <li>• หากได้รับการอนุมัติ หน้าจอนี้จะเปลี่ยนไปโดยอัตโนมัติ</li>
-                    </ul>
-                </div>
+        <div class="flex flex-col items-center space-y-4 mb-10">
+            <div class="relative">
+                <img id="userAvatar" src="" alt="Avatar" class="w-24 h-24 rounded-full border-4 border-orange-600 shadow-lg">
+                <div class="absolute bottom-0 right-0 w-6 h-6 bg-green-500 border-4 border-slate-800 rounded-full"></div>
             </div>
-
-            <div class="space-y-4">
-                <div>
-                    <h3 class="text-gray-400 text-[10px] font-bold uppercase tracking-[0.2em] mb-2 px-1">ข้อมูลผู้เล่นที่ส่งตรวจสอบ</h3>
-                    <div class="flex items-center bg-gray-50 p-4 rounded-xl border border-gray-100 shadow-sm transition-hover hover:border-orange-200">
-                        <img id="user-avatar" src="https://cdn.discordapp.com/embed/avatars/0.png" class="w-12 h-12 rounded-full mr-4 border-2 border-white shadow-sm">
-                        <div>
-                            <div class="text-gray-800 font-bold text-base" id="user-display">lindstelbla1</div>
-                            <div class="text-gray-400 text-xs font-mono" id="id-display">1452174765707235331</div>
-                        </div>
-                    </div>
-                </div>
+            <div class="text-center">
+                <h2 id="userName" class="text-xl font-bold text-white">Loading...</h2>
+                <p id="userRoleDisplay" class="text-gray-400 text-sm italic">Citizen of Why City</p>
             </div>
+        </div>
 
-            <button onclick="window.location.reload()" class="w-full mt-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold rounded-xl transition-all text-sm">
-                รีเฟรชสถานะ
+        <div class="space-y-3">
+            <a href="fivem://connect/IP_SERVER_YOUR" class="glow-btn flex items-center justify-center w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-4 px-6 rounded-2xl transition-all transform hover:scale-[1.03] active:scale-95">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+                เข้าสู่เซิร์ฟเวอร์ (FiveM)
+            </a>
+
+            <button onclick="logout()" class="w-full py-3 text-gray-500 hover:text-white text-sm font-medium transition-colors">
+                ออกจากระบบ
             </button>
+        </div>
 
-            <p class="text-center text-[10px] text-gray-400 mt-8 uppercase tracking-widest">
-                WHY CITY SECURITY SYSTEM
-            </p>
+        <div class="mt-8 pt-6 border-t border-white/5 text-center">
+            <p class="text-[10px] text-gray-500 uppercase tracking-tighter">ขอบคุณที่เข้าร่วมเป็นส่วนหนึ่งของครอบครัวเรา</p>
         </div>
     </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-
-        // 1. ใช้ Firebase Config เดิมของคุณ
-        const firebaseConfig = {
-            apiKey: "AIzaSyAu_tpFJkolV90YBMFwzSUIu8KnusAB8mg",
-            authDomain: "verify-hiz.firebaseapp.com",
-            databaseURL: "https://verify-hiz-default-rtdb.firebaseio.com",
-            projectId: "verify-hiz",
-            storageBucket: "verify-hiz.firebasestorage.app",
-            messagingSenderId: "1001871666471",
-            appId: "1:1001871666471:web:f4d9b9bca8ac45b8634d02"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
-
-        // ข้อมูลจำลอง (ในระบบจริงจะดึงจาก Discord)
-        const userData = {
-            username: "lindstelbla1",
-            uid: "1452174765707235331",
-            avatar: "https://cdn.discordapp.com/embed/avatars/0.png"
-        };
-
-        // 2. เมื่อเปิดหน้านี้ ให้ส่งข้อมูลเข้า Firebase ทันทีเพื่อให้แอดมินเห็นในหน้า Dashboard
+    <script>
+        // ระบบตรวจสอบความปลอดภัย (Security Gate)
         window.onload = function() {
-            const requestRef = ref(db, 'pending_requests/' + userData.uid);
-            set(requestRef, {
-                username: userData.username,
-                uid: userData.uid,
-                status: 'pending',
-                timestamp: Date.now()
-            });
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            const userRole = localStorage.getItem('userRole');
 
-            // 3. ระบบ Real-time เช็คว่าแอดมินกดอนุมัติหรือยัง
-            // หากในฐานข้อมูล audit_logs มีรายการอนุมัติ User ID นี้ ให้ส่งไปหน้าสมาชิก
-            const logsRef = ref(db, 'audit_logs');
-            onValue(logsRef, (snapshot) => {
-                const logs = snapshot.val();
-                if (logs) {
-                    Object.values(logs).forEach(log => {
-                        if (log.targetUser === userData.username && log.action === 'อนุมัติ') {
-                            alert('ยินดีด้วย! คุณได้รับการอนุมัติแล้ว');
-                            window.location.href = 'member.html';
-                        }
-                    });
-                }
-            });
+            // ถ้าไม่ได้ Login ให้ดีดกลับหน้าแรก
+            if (isLoggedIn !== 'true') {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            // แสดงข้อมูลผู้เล่น
+            const name = localStorage.getItem('userName') || localStorage.getItem('adminName') || 'Guest';
+            const avatar = localStorage.getItem('userAvatar') || localStorage.getItem('adminAvatar') || 'https://cdn.discordapp.com/embed/avatars/0.png';
+            
+            document.getElementById('userName').innerText = name;
+            document.getElementById('userAvatar').src = avatar;
+            
+            if(userRole === 'admin') {
+                document.getElementById('userRoleDisplay').innerText = 'Server Administrator';
+                document.getElementById('userRoleDisplay').classList.replace('text-gray-400', 'text-orange-400');
+            }
         };
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = 'index.html';
+        }
     </script>
 </body>
 </html>
