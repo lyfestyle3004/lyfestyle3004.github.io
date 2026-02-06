@@ -1,757 +1,122 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Joqueen - Name List</title>
-
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet" />
-  <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <!-- Bootstrap Icons -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
-  
-  <style>
-    @keyframes bg-animate {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      background: linear-gradient(-45deg, #f079ca, #000000, #000000, #f079ca);
-      background-size: 400% 400%;
-      animation: bg-animate 15s ease infinite;
-      font-family: 'Poppins', sans-serif;
-      color: #EDEDED;
-      overflow-x: hidden;
-      user-select: none;
-    }
-
-    #loader {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: #23272A;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
-      transition: opacity 0.6s ease;
-    }
-
-    .loader-spinner {
-      border: 8px solid rgba(255, 255, 255, 0.1);
-      border-top: 8px solid #ffffff;
-      border-radius: 50%;
-      width: 80px;
-      height: 80px;
-      animation: spin 1.2s linear infinite;
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    .sidebar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      height: 100vh;
-      width: 240px;
-      background: rgba(44, 47, 51, 0);
-      backdrop-filter: blur(16px);
-      border-right: 1px solid rgba(255, 255, 255, 0.05);
-      color: #fff;
-      padding: 1.5rem 1rem;
-      transition: width 0.3s ease;
-      z-index: 1000;
-      box-shadow: 5px 0 15px rgba(0, 0, 0, 0.2);
-    }
-
-    .sidebar.collapsed {
-      width: 84px;
-    }
-
-    .sidebar-header {
-      font-size: 1.7rem;
-      font-weight: bold;
-      margin-bottom: 2.5rem;
-      text-shadow: 0 0 10px #ffffff;
-      text-align: center;
-      white-space: nowrap;
-      overflow: hidden;
-      transition: all 0.3s ease;
-    }
-
-    .sidebar.collapsed .sidebar-header .link-text,
-    .sidebar.collapsed .menu-text {
-      display: none;
-    }
-
-    .sidebar-menu {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-
-    .sidebar-menu li {
-      margin-bottom: 1.2rem;
-    }
-
-    .sidebar-menu a {
-      color: #ffffffcc;
-      text-decoration: none;
-      font-weight: 500;
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      padding: 0.75rem 1rem;
-      border-radius: 12px;
-      transition: all 0.3s ease;
-      position: relative;
-    }
-
-    .sidebar-menu a:hover {
-      background: rgba(255, 255, 255, 0);
-      color: #ffffff;
-      transform: translateX(5px);
-      box-shadow: 0 0 12px rgba(255, 255, 255, 0.4);
-    }
-
-    .sidebar-menu a i {
-      font-size: 1.2rem;
-      transition: transform 0.3s;
-    }
-
-    .sidebar-menu a:hover i {
-      transform: scale(1.2);
-    }
-
-    .toggle-btn {
-      position: absolute;
-      top: 1.2rem;
-      transition: left 0.3s ease;
-    }
-
-    .sidebar.collapsed ~ .toggle-btn {
-      left: 70px;
-    }
-
-    .sidebar:not(.collapsed) ~ .toggle-btn {
-      left: 220px;
-    }
-
-    .sidebar:not(.collapsed) ~ .header,
-    .sidebar:not(.collapsed) ~ .main-content {
-      margin-left: 220px;
-      transition: margin-left 0.3s ease;
-    }
-
-    .sidebar.collapsed ~ .header,
-    .sidebar.collapsed ~ .main-content {
-      margin-left: 60px;
-      transition: margin-left 0.3s ease;
-    }
-
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1.5rem 3rem;
-      background: rgba(0,0,0,0.5);
-      backdrop-filter: blur(10px);
-      position: relative;
-      z-index: 10;
-    }
-
-    h1 {
-      font-size: 3rem;
-      font-weight: 700;
-      text-shadow: 0 0 20px #ffffff;
-    }
-
-    .logo {
-      font-size: 2rem;
-      font-weight: bold;
-      color: #fff;
-      text-shadow: 0 0 10px #fefefe;
-      cursor: pointer;
-    }
-
-    .main-content {
-      text-align: center;
-      margin-top: 6rem;
-      opacity: 0;
-      transition: opacity 0.6s ease;
-      position: relative;
-      z-index: 10;
-      padding: 0 2rem;
-      
-    }
-
-    .main-content.show {
-      opacity: 1;
-    }
-
-    #particle-canvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    /* ทำให้ Table โปร่งใส */
-.table {
-  background-color: transparent !important;
-  border-collapse: separate;
-  border-spacing: 0 8px; /* เว้นระยะระหว่างแถว (ดูโปร่งกว่า) */
-}
-
-.table thead {
-  background-color: rgba(255, 255, 255, 0.05) !important; /* หัวตารางเบลออ่อนๆ */
-  backdrop-filter: blur(10px);
-}
-
-.table tbody {
-  background-color: transparent !important;
-}
-
-.table th,
-.table td {
-  background-color: rgba(255, 255, 255, 0.03) !important; /* Cell โปร่งใส */
-  color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.1); /* ขอบบางๆ */
-  backdrop-filter: blur(10px);
-  transition: all 0.3s ease;
-}
-
-/* Hover effect */
-.table-hover tbody tr:hover td {
-  background-color: rgba(255, 255, 255, 0.1) !important;
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
-}
-
-/* Pagination ปุ่มให้โปร่งใส + สวยขึ้น */
-.pagination .page-link {
-  background-color: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #fff;
-  backdrop-filter: blur(8px);
-  transition: all 0.3s ease;
-}
-
-.pagination .page-item.active .page-link {
-  background-color: rgba(255, 255, 255, 0.15);
-  border-color: rgba(255, 255, 255, 0.3);
-  color: #fff;
-  box-shadow: 0 0 12px rgba(255, 255, 255, 0.3);
-}
-
-.pagination .page-link:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  color: #fff;
-}
-
-/* ปรับ Main Content ให้นุ่มขึ้น */
-.main-content {
-  background: rgba(255, 255, 255, 0.02);
-  backdrop-filter: blur(20px);
-  border-radius: 16px;
-  padding: 2rem;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
-}
-
-
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>รอการยืนยันตัวตน | WHY CITY</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <style>
+        body { font-family: 'Noto Sans Thai', sans-serif; }
+    </style>
 </head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
 
-<body>
-  <canvas id="particle-canvas"></canvas>
-  
-  <!-- Sidebar -->
-  <div id="sidebar" class="">
-  </div>
-
-  <!-- Toggle Sidebar -->
-  <button id="toggleSidebar" class="toggle-btn"></button>
-
-  <!-- Loader -->
-  <div id="loader">
-    <div class="loader-spinner"></div>
-  </div>
-
-  <!-- Header -->
-  <div class="header">
-    <div class="logo" id="logoToggle"></div>
-    <div class="header-buttons"></div>
-  </div>
-
-  <!-- Main Content (Name List) -->
-  <div class="main-content" id="main-content">
-    <h1 style="color:#ffffff; font-size: 3rem; margin: 0;">JOQUEEN</h1>
-    <table class="table table-hover table-bordered">
-    <div class="table-responsive">
-        <thead>
-          <tr>
-            <th>Number</th>
-            <th>Name</th>
-            <th>Facebook</th>
-          </tr>
-        </thead>
-            <div class="credit">
-            Designed by <a href="https://web.facebook.com/mon.winterfell" target="_blank">Theboss Lyfestyle</a> | © 2025
+    <div class="max-w-md w-full bg-white rounded-2xl shadow-2xl overflow-hidden animate__animated animate__fadeIn">
+        <div class="bg-orange-600 px-6 py-8 text-center relative">
+            <div class="flex justify-center mb-4">
+                <div class="bg-white rounded-full p-3 inline-block shadow-lg animate__animated animate__pulse animate__infinite">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+            </div>
+            <h1 class="text-white text-2xl font-bold">รอการตรวจสอบ</h1>
+            <p class="text-orange-100 mt-2">โปรดรอแอดมินอนุมัติสิทธิ์เข้าสู่เซิร์ฟเวอร์</p>
         </div>
-        <tbody id="namelist-body">
-          <!-- JS จะเติมตรงนี้ -->
-        </tbody>
-      </table>
+
+        <div class="px-6 py-6">
+            <div class="bg-orange-50 border border-orange-200 rounded-xl p-4 mb-6">
+                <div class="flex items-center mb-3">
+                    <div class="w-2.5 h-2.5 bg-orange-500 rounded-full animate-ping mr-2"></div>
+                    <h3 class="text-orange-800 font-bold text-lg">สถานะ: กำลังรอแอดมิน</h3>
+                </div>
+                <p class="text-orange-700 text-sm mb-4">ระบบได้รับคำขอของคุณแล้ว ข้อมูลของคุณจะแสดงในแผงควบคุมของแอดมินโดยอัตโนมัติ</p>
+                
+                <div class="bg-white/50 border border-orange-100 rounded-lg p-3">
+                    <p class="text-sm font-bold text-orange-800 mb-1 italic underline">คำแนะนำ:</p>
+                    <ul class="text-xs text-orange-700 space-y-1">
+                        <li>• ข้อมูลของคุณถูกส่งเข้าสู่ระบบ Firebase แล้ว</li>
+                        <li>• คุณสามารถแจ้งชื่อในห้อง Discord เพื่อความรวดเร็ว</li>
+                        <li>• หากได้รับการอนุมัติ หน้าจอนี้จะเปลี่ยนไปโดยอัตโนมัติ</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <h3 class="text-gray-400 text-[10px] font-bold uppercase tracking-[0.2em] mb-2 px-1">ข้อมูลผู้เล่นที่ส่งตรวจสอบ</h3>
+                    <div class="flex items-center bg-gray-50 p-4 rounded-xl border border-gray-100 shadow-sm transition-hover hover:border-orange-200">
+                        <img id="user-avatar" src="https://cdn.discordapp.com/embed/avatars/0.png" class="w-12 h-12 rounded-full mr-4 border-2 border-white shadow-sm">
+                        <div>
+                            <div class="text-gray-800 font-bold text-base" id="user-display">lindstelbla1</div>
+                            <div class="text-gray-400 text-xs font-mono" id="id-display">1452174765707235331</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="window.location.reload()" class="w-full mt-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold rounded-xl transition-all text-sm">
+                รีเฟรชสถานะ
+            </button>
+
+            <p class="text-center text-[10px] text-gray-400 mt-8 uppercase tracking-widest">
+                WHY CITY SECURITY SYSTEM
+            </p>
+        </div>
     </div>
 
-    <!-- Pagination -->
-    <nav aria-label="Page navigation example">
-      <ul class="pagination justify-content-center mt-4" id="pagination">
-        <!-- JS จะเติมตรงนี้ -->
-      </ul>
-    </nav>
-  </div>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-  <!-- JS -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        // 1. ใช้ Firebase Config เดิมของคุณ
+        const firebaseConfig = {
+            apiKey: "AIzaSyAu_tpFJkolV90YBMFwzSUIu8KnusAB8mg",
+            authDomain: "verify-hiz.firebaseapp.com",
+            databaseURL: "https://verify-hiz-default-rtdb.firebaseio.com",
+            projectId: "verify-hiz",
+            storageBucket: "verify-hiz.firebasestorage.app",
+            messagingSenderId: "1001871666471",
+            appId: "1:1001871666471:web:f4d9b9bca8ac45b8634d02"
+        };
 
-  <script>
-    window.addEventListener("load", function () {
-      const loader = document.getElementById("loader");
-      const content = document.getElementById("main-content");
-      loader.style.opacity = "0";
-      setTimeout(() => {
-        loader.style.display = "none";
-        content.classList.add("show");
-      }, 600);
-    });
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
 
-    // Sidebar toggle logic
-    const logo = document.getElementById('logoToggle');
-    const sidebar = document.getElementById('sidebar');
-    const linkText = sidebar.querySelector('.sidebar-header .link-text');
+        // ข้อมูลจำลอง (ในระบบจริงจะดึงจาก Discord)
+        const userData = {
+            username: "lindstelbla1",
+            uid: "1452174765707235331",
+            avatar: "https://cdn.discordapp.com/embed/avatars/0.png"
+        };
 
-    logo.addEventListener('click', () => {
-      sidebar.classList.toggle('collapsed');
+        // 2. เมื่อเปิดหน้านี้ ให้ส่งข้อมูลเข้า Firebase ทันทีเพื่อให้แอดมินเห็นในหน้า Dashboard
+        window.onload = function() {
+            const requestRef = ref(db, 'pending_requests/' + userData.uid);
+            set(requestRef, {
+                username: userData.username,
+                uid: userData.uid,
+                status: 'pending',
+                timestamp: Date.now()
+            });
 
-      if (!sidebar.classList.contains('collapsed')) {
-        linkText.textContent = '‎';
-      } else {
-        linkText.textContent = '';
-      }
-    });
-
-
-    // Particle Background (เหมือนเดิม)
-    const canvas = document.getElementById('particle-canvas');
-    const ctx = canvas.getContext('2d');
-    let particlesArray;
-
-    function initCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    }
-
-    window.addEventListener('resize', () => {
-      initCanvas();
-      initParticles();
-    });
-
-    class Particle {
-      constructor() {
-        this.x = Math.random() * canvas.width;
-        this.y = Math.random() * canvas.height;
-        this.radius = 1 + Math.random() * 3;
-        this.speedX = (Math.random() - 0.5) * 0.2;
-        this.speedY = (Math.random() - 0.5) * 0.2;
-        this.alpha = 0.1 + Math.random() * 0.3;
-      }
-
-      update() {
-        this.x += this.speedX;
-        this.y += this.speedY;
-        if (this.x < 0 || this.x > canvas.width) this.speedX = -this.speedX;
-        if (this.y < 0 || this.y > canvas.height) this.speedY = -this.speedY;
-      }
-
-      draw() {
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(255, 255, 255, ${this.alpha})`;
-        ctx.fill();
-      }
-    }
-
-    function initParticles() {
-      particlesArray = [];
-      const numberOfParticles = Math.floor(canvas.width / 10);
-      for (let i = 0; i < numberOfParticles; i++) {
-        particlesArray.push(new Particle());
-      }
-    }
-
-    function animate() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      particlesArray.forEach(p => {
-        p.update();
-        p.draw();
-      });
-      requestAnimationFrame(animate);
-    }
-
-    initCanvas();
-    initParticles();
-    animate();
-
-    // NAME LIST + Pagination
-    const names = [
-  "Theboss Joqueen",
-  "Lukpeach Joqueen",
-  "Koko Joqueen",
-  "Furby Joqueen",
-  "Mayugi Joqueen",
-  "Camelia Joqueen",
-  "Bingo Joqueen",
-  "Fumi Joqueen",
-  "Meiji Joqueen",
-  "Sophia Joqueen",
-  "Hmeihyong Joqueen",
-  "kheanfah Joqueen",
-  "Karla Joqueen",
-  "Zomin Joqueen",
-  "Yornor Joqueen",
-  "Norain Joqueen",
-  "Valanciaxy Joqueen",
-  "Uzu Joqueen",
-  "Umami Joqueen",
-  "Tong Joqueen",
-  "Thianhom Joqueen",
-  "Theara Joqueen",
-  "Sophia Joqueen",
-  "Slotty Joqueen",
-  "Tonkun Joqueen",
-  "Sisin Joqueen",
-  "Sinvir Joqueen",
-  "Shxrlyn Joqueen",
-  "Senso Joqueen",
-  "Paeguay Joqueen",
-  "Seeyou Joqueen",
-  "Scarlet Joqueen",
-  "Sathu Joqueen",
-  "Sosom Joqueen",
-  "Rose Joqueen",
-  "Rin Joqueen",
-  "Rene Joqueen",
-  "Rachel Joqueen",
-  "Rachel Joqueen",
-  "Platu Joqueen",
-  "Ponia Joqueen",
-  "Plengrak Joqueen",
-  "Pinkproud Joqueen",
-  "Pan Joqueen",
-  "Pamper Joqueen",
-  "Olive Joqueen",
-  "Nongrelie Joqueen",
-  "Nongginie Joqueen",
-  "Nongpunpun Joqueen",
-  "Nongpuifai Joqueen",
-  "Nongpakiew Joqueen",
-  "Nongmind Joqueen",
-  "Nongmill Joqueen",
-  "Nonglove Joqueen",
-  "Nongice Joqueen",
-  "Nongdutch Joqueen",
-  "Nongdo Joqueen",
-  "Nongaungfong Joqueen",
-  "Nongaom Joqueen",
-  "Noah Joqueen",
-  "Nene Joqueen",
-  "Nadia Joqueen",
-  "Moomin Joqueen",
-  "Mona Joqueen",
-  "Model Joqueen",
-  "Mint Joqueen",
-  "Milin Joqueen",
-  "Meyou Joqueen",
-  "Meyou Joqueen",
-  "Meyou Joqueen",
-  "Merlin Joqueen",
-  "Meme Joqueen",
-  "Melon Joqueen",
-  "Megan Joqueen",
-  "Mayu Joqueen",
-  "Mayrin Joqueen",
-  "Maybell Joqueen",
-  "Maru Joqueen",
-  "Mabel Joqueen",
-      "Gusjung Joqueen",
-    "Kaengphet Joqueen",
-    "Chel Joqueen",
-    "Sid Joqueen",
-    "Sonic Joqueen",
-    "Zoey Joqueen",
-    "Ice Joqueen",
-    "Mirin Joqueen",
-    "Iva Joqueen",
-    "Venus Joqueen",
-    "Arlan Joqueen",
-    "Aily Joqueen",
-    "Aina Joqueen",
-    "Anastasiaa Joqueen",
-    "Atom Joqueen",
-    "Bebby Joqueen",
-    "Bebby Joqueen",
-    "Blueeye Joqueen",
-    "Bxbyboo Joqueen",
-    "Cartier Joqueen",
-    "Chinjang Joqueen",
-    "Ciel Joqueen",
-    "Crem Joqueen",
-    "Darin Joqueen",
-    "Del Joqueen",
-    "Delta Joqueen",
-    "Dewy Joqueen",
-    "Downy Joqueen",
-    "Elise Joqueen",
-    "Emma Joqueen",
-    "Zoey Joqueen",
-    "Faren Joqueen",
-    "Foyou Joqueen",
-    "Freyaa Joqueen",
-    "Freya Joqueen",
-    "Gamgi Joqueen",
-    "Ginny Joqueen",
-    "Gracey Joqueen",
-    "Guichay Joqueen",
-    "Hana Joqueen",
-    "Hanah Joqueen",
-    "Holly Joqueen",
-    "Ikqsang Joqueen",
-    "Inzane Joqueen",
-    "Ivy Joqueen",
-    "Ivy Joqueen",
-    "Jaodao Joqueen",
-    "Jim Joqueen",
-    "Joins Joqueen",
-    "Joonjann Joqueen",
-    "Jui Joqueen",
-    "June Joqueen",
-    "Jasmin Joqueen",
-    "Jayrin Joqueen",
-    "Khanomwaan Joqueen",
-    "Konprod Joqueen",
-    "Kurazao Joqueen",
-    "Layla Joqueen",
-    "Leylin Joqueen",
-    "Lukpeach Joqueen",
-    "Kieow Joqueen",
-    "Bubi Joqueen"
-];
-
-    const facebookLinks = [
-  "https://www.facebook.com/realzhy.rawyesonsnow?locale=th_TH",
-  "https://www.facebook.com/Lukpeachy?locale=th_TH",
-  "https://www.facebook.com/kokodekliangkai?locale=th_TH",
-  "https://www.facebook.com/fall1nluvcat?locale=th_TH",
-  "https://www.facebook.com/hzplx.17?locale=th_TH",
-  "https://www.facebook.com/camelia.camelia.camelia.2024?locale=th_TH",
-  "https://www.facebook.com/bingsanzapi?locale=th_TH",
-  "https://www.facebook.com/n.ng.engjai.pe?locale=th_TH",
-  "https://www.facebook.com/meiji.sabudbob?locale=th_TH",
-  "https://www.facebook.com/Mxmuuu?locale=th_TH",
-  "https://www.facebook.com/mjiiii?locale=th_TH",
-  "https://www.facebook.com/inongkhxanfah?locale=th_TH",
-  "https://www.facebook.com/karlajoqueen?locale=th_TH",
-  "https://www.facebook.com/zomin.joqueen?locale=th_TH",
-  "https://www.facebook.com/yornori?locale=th_TH",
-  "https://www.facebook.com/volcanic.eruptions.release.aerosols?locale=th_TH",
-  "https://www.facebook.com/valanciaxy.lxsvegas?locale=th_TH",
-  "https://www.facebook.com/uzu.egoroy?locale=th_TH",
-  "https://www.facebook.com/umami.madiwa?locale=th_TH",
-  "https://www.facebook.com/tong.lnwroblox.i?locale=th_TH",
-  "https://www.facebook.com/thianhom.dai?locale=th_TH",
-  "https://www.facebook.com/Joqueengirl?locale=th_TH",
-  "https://www.facebook.com/sophia.xjad?locale=th_TH",
-  "https://www.facebook.com/slotty.joqueen?locale=th_TH",
-  "https://www.facebook.com/cxllme.fiw.988994?locale=th_TH",
-  "https://www.facebook.com/sisin.nixr?locale=th_TH",
-  "https://www.facebook.com/sinviri?locale=th_TH",
-  "https://www.facebook.com/shxrlyn.bii?locale=th_TH",
-  "https://www.facebook.com/senso.i.287286?locale=th_TH",
-  "https://www.facebook.com/nongpaeguey?locale=th_TH",
-  "https://www.facebook.com/seeyou.joqueen?locale=th_TH",
-  "https://www.facebook.com/ramxnkub?locale=th_TH",
-  "https://www.facebook.com/sathu.underscore?locale=th_TH",
-  "https://www.facebook.com/Naeva.0405?locale=th_TH",
-  "https://www.facebook.com/rose.najaa.2025?locale=th_TH",
-  "https://www.facebook.com/rin.raimarayart?locale=th_TH",
-  "https://www.facebook.com/ReneDeptalk?locale=th_TH",
-  "https://www.facebook.com/rachel.dekmaidee?locale=th_TH",
-  "https://www.facebook.com/rachel.rachel.rachel.341937?locale=th_TH",
-  "https://www.facebook.com/platu.xciasqueen?locale=th_TH",
-  "https://www.facebook.com/lana.lana.lana.358912?locale=th_TH",
-  "https://www.facebook.com/m.a.r.y.j.a.n.e.fu.2024?locale=th_TH",
-  "https://www.facebook.com/defonotioun?locale=th_TH",
-  "https://www.facebook.com/pan.joqueen.2025?locale=th_TH",
-  "https://www.facebook.com/pampers.x?locale=th_TH",
-  "https://www.facebook.com/olive.joqueen?locale=th_TH",
-  "https://www.facebook.com/nngreliii?locale=th_TH",
-  "https://www.facebook.com/ningginieqiaokuni?locale=th_TH",
-  "https://www.facebook.com/nxng.pan.pan.wan.leif?locale=th_TH",
-  "https://www.facebook.com/nongpuifai.i.2025?locale=th_TH",
-  "https://www.facebook.com/nongpakiew.phungtengsiknechoe?locale=th_TH",
-  "https://www.facebook.com/minenopaini?locale=th_TH",
-  "https://www.facebook.com/location.keep?locale=th_TH",
-  "https://www.facebook.com/love.xyziiroam?locale=th_TH",
-  "https://www.facebook.com/nongiceoneluvi?locale=th_TH",
-  "https://www.facebook.com/nongdutch.joqueen?locale=th_TH",
-  "https://www.facebook.com/nongdo.rakman?locale=th_TH",
-  "https://www.facebook.com/nongaungfongi?locale=th_TH",
-  "https://www.facebook.com/xxmsin.xxmsin.xxmsin.416344?locale=th_TH",
-  "https://www.facebook.com/noah.shehot?locale=th_TH",
-  "https://www.facebook.com/nene.shehot?locale=th_TH",
-  "https://www.facebook.com/nadia.eiei.1288?locale=th_TH",
-  "https://www.facebook.com/moomiin.alpha?locale=th_TH",
-  "https://www.facebook.com/mona.trywind?locale=th_TH",
-  "https://www.facebook.com/model.i.606608?locale=th_TH",
-  "https://www.facebook.com/mint.mint.mint.175658?locale=th_TH",
-  "https://www.facebook.com/milin.milin.milin.644404?locale=th_TH",
-  "https://www.facebook.com/meyou.meyou.meyou.621664?locale=th_TH",
-  "https://www.facebook.com/meyou.hm?locale=th_TH",
-  "https://www.facebook.com/meyou.alwaysbewithme?locale=th_TH",
-  "https://www.facebook.com/merlin.merlin.957725?locale=th_TH",
-  "https://www.facebook.com/korty.pol?locale=th_TH",
-  "https://www.facebook.com/meloniceeee?locale=th_TH",
-  "https://www.facebook.com/megan.lowwell?locale=th_TH",
-  "https://www.facebook.com/mayu.sensery?locale=th_TH",
-  "https://www.facebook.com/merin.xjad?locale=th_TH",
-  "https://www.facebook.com/maybell.saiyah?locale=th_TH",
-  "https://www.facebook.com/ma.ru.120901?locale=th_TH",
-  "https://www.facebook.com/mabel.debut?locale=th_TH",
-    "https://www.facebook.com/profile.php?id=100089202116557&locale=th_TH",
-    "https://www.facebook.com/nxng.k.ng.phed.ri.phay?locale=th_TH",
-    "https://www.facebook.com/rachel.mahathep?locale=th_TH",
-    "https://www.facebook.com/sydney.awake?locale=th_TH",
-    "https://www.facebook.com/dyshsgsydtxsh?locale=th_TH",
-    "https://www.facebook.com/bxbycxrnflakes?locale=th_TH",
-    "https://www.facebook.com/wade.jaygenson?locale=th_TH",
-    "https://www.facebook.com/nxw.mi.rin.phung.deng?locale=th_TH",
-    "https://www.facebook.com/iva.iva.iva.643398?locale=th_TH",
-    "https://www.facebook.com/venus.xjadd?locale=th_TH",
-    "https://www.facebook.com/xray.xray.949673?locale=th_TH",
-    "https://www.facebook.com/ilysnamrrom?locale=th_TH",
-    "https://www.facebook.com/aina.aina.aina.2024#",
-    "https://www.facebook.com/anastasiaa.anastasiaa.2025?locale=th_TH",
-    "https://www.facebook.com/a.m.i.710319?locale=th_TH",
-    "https://www.facebook.com/bebby.chwrienys?locale=th_TH",
-    "https://www.facebook.com/bebby.bebby.bebby.430688?locale=th_TH",
-    "https://www.facebook.com/blueeyejoqueeneiei?locale=th_TH",
-    "https://www.facebook.com/bxby.boo.218362?locale=th_TH",
-    "https://www.facebook.com/cartier.polly",
-    "https://www.facebook.com/chinjang.554526",
-    "https://www.facebook.com/ciel.ranmazii",
-    "https://www.facebook.com/crxbbbycryi",
-    "https://www.facebook.com/Darinnarek",
-    "https://www.facebook.com/del.joqueen",
-    "https://www.facebook.com/delta.highstar",
-    "https://www.facebook.com/dewy.giferla",
-    "https://www.facebook.com/downy.520680",
-    "https://www.facebook.com/zorzen.fahpathan",
-    "https://www.facebook.com/profile.php?id=100083976952248",
-    "https://www.facebook.com/share/16cEBZxeFq/?mibextid=wwXIfr",
-    "https://www.facebook.com/faren.giferla",
-    "https://www.facebook.com/foyou.makondeawseawtoungsoy",
-    "https://www.facebook.com/freyaa.phuyingyai",
-    "https://www.facebook.com/LyxeeGodyouknow",
-    "https://www.facebook.com/profile.php?id=61576867772312",
-    "https://www.facebook.com/ginny.maryjane.2024",
-    "https://www.facebook.com/gracey.162266",
-    "https://www.facebook.com/guichay.a",
-    "https://www.facebook.com/hana.joqueen",
-    "https://www.facebook.com/hannah.joqueen",
-    "https://www.facebook.com/HollyyPolarbears",
-    "https://www.facebook.com/nongiqkuppomm",
-    "https://www.facebook.com/inzane.sensery",
-    "https://www.facebook.com/ivy.centiara",
-    "https://www.facebook.com/nongmarini",
-    "https://www.facebook.com/khidaw.666397",
-    "https://www.facebook.com/jim.mostkill",
-    "https://www.facebook.com/joins.donsay",
-    "https://www.facebook.com/joonjann.n.nathan",
-    "https://www.facebook.com/jui.jui.jui.8354",
-    "https://www.facebook.com/june.fluffybennie",
-    "https://www.facebook.com/jxsminq.joqueen",
-    "https://www.facebook.com/share/19S2V7Rwdi/?mibextid=wwXIfr",
-    "https://www.facebook.com/khanomwaan.winterfell.demo",
-    "https://www.facebook.com/tonliew.nauthiz",
-    "https://www.facebook.com/kurazao.gin",
-    "https://www.facebook.com/layla.raimarayart",
-    "https://www.facebook.com/Bxberin",
-    "https://www.facebook.com/lukpeach.shehot",
-    "https://www.facebook.com/share/1RzikV7wPa/?mibextid=wwXIfr",
-    "https://www.facebook.com/share/12JPPhY764C/?mibextid=wwXIfr"
-];
-
-
-    const itemsPerPage = 10;
-    let currentPage = 1;
-
-    function renderTable(page) {
-      const tbody = document.getElementById('namelist-body');
-      tbody.innerHTML = '';
-      const start = (page - 1) * itemsPerPage;
-      const end = Math.min(start + itemsPerPage, names.length);
-
-      for (let i = start; i < end; i++) {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${i + 1}</td>
-          <td>${names[i]}</td>
-          <td>
-            <a href="${facebookLinks[i]}" target="_blank" class="btn btn-outline-light">
-              Facebook
-            </a>
-          </td>
-        `;
-        tbody.appendChild(tr);
-      }
-    }
-
-    function renderPagination() {
-      const pageCount = Math.ceil(names.length / itemsPerPage);
-      const pagination = document.getElementById('pagination');
-      pagination.innerHTML = '';
-
-      for (let i = 1; i <= pageCount; i++) {
-        const li = document.createElement('li');
-        li.className = `page-item ${i === currentPage ? 'active' : ''}`;
-        li.innerHTML = `<a class="page-link" href="#">${i}</a>`;
-        li.addEventListener('click', (e) => {
-          e.preventDefault();
-          currentPage = i;
-          renderTable(currentPage);
-          renderPagination();
-        });
-        pagination.appendChild(li);
-      }
-    }
-
-    // Initial Render
-    renderTable(currentPage);
-    renderPagination();
-  </script>
+            // 3. ระบบ Real-time เช็คว่าแอดมินกดอนุมัติหรือยัง
+            // หากในฐานข้อมูล audit_logs มีรายการอนุมัติ User ID นี้ ให้ส่งไปหน้าสมาชิก
+            const logsRef = ref(db, 'audit_logs');
+            onValue(logsRef, (snapshot) => {
+                const logs = snapshot.val();
+                if (logs) {
+                    Object.values(logs).forEach(log => {
+                        if (log.targetUser === userData.username && log.action === 'อนุมัติ') {
+                            alert('ยินดีด้วย! คุณได้รับการอนุมัติแล้ว');
+                            window.location.href = 'member.html';
+                        }
+                    });
+                }
+            });
+        };
+    </script>
 </body>
 </html>
