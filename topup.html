@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เติมเงิน - Shop Dashboard</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+         :root {
+            --primary: #00d2ff;
+            --secondary: #3a7bd5;
+            --dark: #06070a; /* สีพื้นหลัง */
+            --text-main: #ffffff; /* สีฟอนต์ */
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.1);
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            background-color: var(--dark);
+            color: var(--text-main);
+            font-family: 'Kanit', sans-serif;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(0, 210, 255, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(58, 123, 213, 0.05) 0%, transparent 40%);
+        }
+
+        /* --- SNOWFALL EFFECT --- */
+        .snow-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+        .snowflake { position: absolute; top: -10px; background: white; border-radius: 50%; filter: blur(1px); opacity: 0.2; animation: fall linear infinite; }
+        @keyframes fall {
+            0% { transform: translateY(0) translateX(0); opacity: 0; }
+            10% { opacity: 0.2; }
+            100% { transform: translateY(105vh) translateX(50px); opacity: 0; }
+        }
+        /* กำหนดค่าหิมะให้เหมือนเดิม */
+        .snowflake:nth-child(1) { width: 4px; height: 4px; left: 10%; animation-duration: 10s; }
+        .snowflake:nth-child(2) { width: 5px; height: 5px; left: 30%; animation-duration: 15s; animation-delay: 2s; }
+        .snowflake:nth-child(3) { width: 3px; height: 3px; left: 50%; animation-duration: 12s; animation-delay: 4s; }
+        .snowflake:nth-child(4) { width: 4px; height: 4px; left: 70%; animation-duration: 18s; animation-delay: 1s; }
+        .snowflake:nth-child(5) { width: 3px; height: 3px; left: 90%; animation-duration: 14s; animation-delay: 5s; }
+
+        /* --- NAVBAR MODERN CSS --- */
+.navbar-modern { 
+    background: rgba(6, 7, 10, 0.7); 
+    backdrop-filter: blur(20px); 
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1); 
+    z-index: 1000; 
+    padding: 15px 0;
+}
+
+.nav-auth-btn {
+    display: flex; align-items: center; gap: 10px; padding: 10px 24px; 
+    border-radius: 14px; font-weight: 600; font-size: 13.5px; 
+    text-decoration: none !important;
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1); 
+    height: 44px; position: relative; overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.nav-auth-shine { 
+    position: absolute; top: 0; left: -100%; width: 100%; height: 100%; 
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent); 
+    transition: left 0.5s ease; 
+}
+
+.nav-auth-btn:hover .nav-auth-shine { left: 100%; }
+
+.nav-auth-login { 
+    background: rgba(255, 255, 255, 0.04); 
+    color: rgba(255, 255, 255, 0.85) !important; 
+    backdrop-filter: blur(8px); 
+}
+
+/* สไตล์สำหรับชื่อผู้ใช้ที่จะแสดงใน authArea */
+.user-display {
+    color: #00d2ff;
+    font-weight: 500;
+    font-size: 14px;
+    background: rgba(0, 210, 255, 0.1);
+    padding: 5px 15px;
+    border-radius: 10px;
+    border: 1px solid rgba(0, 210, 255, 0.2);
+}
+
+        .topup-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(15px);
+            transition: 0.3s;
+        }
+
+        .nav-tabs { border: none; gap: 10px; }
+        .nav-link {
+            color: #fff;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border) !important;
+            border-radius: 10px !important;
+            padding: 12px 25px;
+        }
+        .nav-link.active {
+            background: linear-gradient(45deg, var(--primary), var(--secondary)) !important;
+            color: white !important;
+            border: none !important;
+        }
+
+        .form-control {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border);
+            color: white;
+            padding: 12px;
+            border-radius: 10px;
+        }
+        .form-control:focus {
+            background: rgba(0, 0, 0, 0.5);
+            border-color: var(--primary);
+            color: white;
+            box-shadow: 0 0 10px rgba(0, 210, 255, 0.2);
+        }
+
+        .btn-submit {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            border: none;
+            color: white;
+            font-weight: 600;
+            padding: 12px;
+            border-radius: 10px;
+            width: 100%;
+            transition: 0.3s;
+        }
+        .btn-submit:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 210, 255, 0.4);
+        }
+
+        .qr-area img {
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            width: 220px;
+        }
+    </style>
+</head>
+<body>
+    <div id="loading-screen" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #06070a; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; transition: opacity 0.5s ease;">
+    <div class="spinner-border" style="width: 3rem; height: 3rem; color: #fff;" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+    <p style="margin-top: 15px; color: #fff; font-family: 'Kanit', sans-serif; letter-spacing: 1px; opacity: 0.8;">Loading...</p>
+    </div>
+
+
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-modern sticky-top mb-5">
+    <div class="container">
+        <a href="shop.html" class="nav-auth-btn nav-auth-login">
+            <div class="nav-auth-shine"></div>
+            <i class="fa-solid fa-arrow-left me-2"></i> กลับหน้าหลัก
+        </a>
+
+        <div id="authArea" class="d-flex align-items-center">
+            <div class="spinner-border spinner-border-sm text-info" role="status"></div>
+        </div>
+    </div>
+</nav>
+
+    <div class="snow-container">
+        <div class="snowflake"></div><div class="snowflake"></div><div class="snowflake"></div>
+        <div class="snowflake"></div><div class="snowflake"></div>
+    </div>
+
+
+    <div class="container pb-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                
+                <div class="topup-card shadow-lg">
+                    <h2 class="text-center mb-4 fw-bold"><i class="fa-solid fa-wallet me-2 text-primary"></i> เติมเครดิต</h2>
+
+                    <ul class="nav nav-tabs justify-content-center mb-4" id="topupTab" role="tablist">
+                        <li class="nav-item">
+                            <button class="nav-link active" id="promptpay-tab" data-bs-toggle="tab" data-bs-target="#promptpay">
+                                <i class="fa-solid fa-qrcode me-2"></i> PromptPay
+                            </button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link" id="gift-tab" data-bs-toggle="tab" data-bs-target="#gift">
+                                <i class="fa-solid fa-gift me-2"></i> TrueMoney Wallet
+                            </button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content" id="topupTabContent">
+                        
+                        <div class="tab-pane fade show active text-center" id="promptpay">
+                            <div class="mb-4">
+                                <label class="d-block text-white-50 small mb-2 text-start">ใส่จำนวนเงินที่ต้องการเติม</label>
+                                <input type="number" id="pp-amount" class="form-control text-center fs-4 fw-bold" placeholder="0.00">
+                            </div>
+
+                            <button class="btn btn-submit mb-4" id="gen-qr-btn">
+                                สร้าง QR Code ชำระเงิน
+                            </button>
+
+                            <div id="qr-result" class="d-none animate__animated animate__fadeIn">
+                                <div class="qr-area mb-3">
+                                    <img id="qr-img" src="" alt="PromptPay QR">
+                                </div>
+                                <p class="text-info small"><i class="fa-solid fa-circle-info me-1"></i> เมื่อโอนเสร็จแล้ว กรุณานำเลข Ref. มาแจ้งด้านล่าง</p>
+                                
+                                <input type="text" id="pp-ref" class="form-control mb-2" placeholder="เลขที่อ้างอิงจากสลิป">
+                                <button class="btn btn-outline-info w-100" id="confirm-pp-btn">แจ้งยืนยันการโอน</button>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane fade" id="gift">
+                            <div class="text-center mb-4">
+                                <img src="https://img2.pic.in.th/aungpao_truewallet_01.jpg" style="width: 600px;">
+                            </div>
+                            <div class="mb-3">
+                                <label class="small text-white-50 mb-2">ลิงก์ซองของขวัญ TrueMoney Wallet</label>
+                                <input type="text" id="gift-link" class="form-control" placeholder="https://gift.truemoney.com/...">
+                            </div>
+                            <button class="btn btn-submit" id="gift-submit-btn">เติมเงินทันที (อัตโนมัติ)</button>
+                            
+                            <div class="mt-4 p-3 rounded bg-dark text-start small text-white-50">
+                                <b>วิธีใช้:</b> สร้างซอง "แบ่งจำนวนเงินเท่ากัน" ใส่จำนวนคนรับ "1 คน" และคัดลอกลิงก์มาวาง
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getDatabase, ref, get, set, push, update, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+    document.addEventListener('keydown', function(e) {
+    // 1. ป้องกัน Ctrl + S (Save Page)
+    if ((e.ctrlKey || e.metaKey) && (e.key === 's' || e.key === 'S' || e.keyCode === 83)) {
+        e.preventDefault();
+        // showAlert("ไม่อนุญาตให้บันทึกหน้าเว็บ", "danger"); // เปิดใช้ถ้าต้องการให้แจ้งเตือน
+        return false;
+    }
+
+    // 2. ป้องกัน F12 (DevTools)
+    if (e.key === 'F12' || e.keyCode === 123) {
+        e.preventDefault();
+        return false;
+    }
+
+    // 3. ป้องกัน Ctrl + Shift + I / J / C (Inspect/Console)
+    if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C' || e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) {
+        e.preventDefault();
+        return false;
+    }
+
+    // 4. ป้องกัน Ctrl + U (View Source)
+    if ((e.ctrlKey || e.metaKey) && (e.key === 'u' || e.key === 'U' || e.keyCode === 85)) {
+        e.preventDefault();
+        return false;
+    }
+}, false);
+
+
+    // --- 1. CONFIG (ใส่ค่าของคุณให้ครบ) ---
+    const firebaseConfig = { 
+            apiKey: "AIzaSyAu_tpFJkolV90YBMFwzSUIu8KnusAB8mg",
+            authDomain: "verify-hiz.firebaseapp.com",
+            databaseURL: "https://verify-hiz-default-rtdb.firebaseio.com",
+            projectId: "verify-hiz",
+            storageBucket: "verify-hiz.firebasestorage.app",
+            messagingSenderId: "1001871666471",
+            appId: "1:1001871666471:web:daea600bd157f907634d02"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const auth = getAuth(app);
+    const EASYSLIP_KEY = "7f2cd46f-6543-4740-b0f5-131039c9b676"; // *** ใส่ API Key จาก easyslip.com ***
+
+    let userAccount = null;
+
+
+    onValue(ref(db, 'config'), (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+            // เปลี่ยนชื่อแบรนด์ใน Navbar
+            const brand = document.querySelector('.nav-brand span');
+            if (brand && data.webName) brand.innerText = data.webName;
+
+            // เปลี่ยนรูป Banner (ถ้าใน HTML ของคุณมี id="shop-banner")
+            const banner = document.getElementById('shop-banner');
+            if (banner && data.bannerUrl) banner.src = data.bannerUrl;
+        }
+    });
+
+    onValue(ref(db, 'config'), (snapshot) => {
+        const config = snapshot.val();
+        if (config) {
+
+            if (config.themeColor) {
+                const pColor = config.themeColor;
+                const sColor = config.secondaryColor || pColor; 
+                document.documentElement.style.setProperty('--primary', pColor);
+                document.documentElement.style.setProperty('--secondary', sColor);
+                document.documentElement.style.setProperty('--purple-glow', pColor + '4d');
+                // พื้นหลังสีเดียว (Solid) ตามที่คุณต้องการ
+                document.body.style.backgroundImage = `
+                    radial-gradient(circle at 20% 30%, ${pColor}0d 0%, transparent 40%),
+                    radial-gradient(circle at 80% 70%, ${sColor}0d 0%, transparent 40%)
+                `;
+            }
+
+            // --- ส่วนที่เพิ่มใหม่: ปิดหน้าโหลด ---
+            const loadingScreen = document.getElementById('loading-screen');
+            if (loadingScreen) {
+                loadingScreen.style.opacity = '0'; // ค่อยๆ จางออก
+                setTimeout(() => {
+                    loadingScreen.style.display = 'none'; // นำออกจากหน้าจอ
+                }, 500); // ระยะเวลาต้องเท่ากับ transition ใน style
+            }
+            // แก้ไขชื่อเว็บไซต์ในจุดต่างๆ
+            if (config.siteName) {
+                document.title = config.siteName;
+                const siteNameElements = [
+                    document.getElementById('site-name-display'), // ใน Hero
+                    document.getElementById('site-name-nav')      // ใน Navbar (ถ้ามี)
+                ];
+                siteNameElements.forEach(el => { if(el) el.innerText = config.siteName; });
+            }
+            
+            // แก้ไขสีธีมหลัก (ส่งผลต่อ Glow และปุ่ม)
+            if (config.themeColor) {
+                document.documentElement.style.setProperty('--primary', config.themeColor);
+            }
+
+            const primaryColor = config.themeColor || '#00d2ff';
+            const bgColor = config.bgColor || '#06070a';
+
+            // 1. อัปเดตสีหลัก (Theme Color)
+            document.documentElement.style.setProperty('--primary', primaryColor);
+
+            // 2. อัปเดต Background Image (Radial Gradient) แบบไดนามิก
+            // เราจะใช้สี Theme ที่เลือก มาทำเป็นแสงจางๆ (Alpha 0.05 - 0.1)
+            document.body.style.backgroundImage = `
+                radial-gradient(circle at 20% 30%, ${primaryColor}1a 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, ${primaryColor}0d 0%, transparent 40%)
+            `;
+            document.body.style.backgroundColor = bgColor;
+
+            // 3. จัดการสีปุ่มตอน Hover และปุ่ม Register
+            // สร้าง Style Tag พิเศษเพื่อคุม Hover Shadow และ Gradient ปุ่ม Register
+            let dynamicStyle = document.getElementById('dynamic-theme-style');
+            if (!dynamicStyle) {
+                dynamicStyle = document.createElement('style');
+                dynamicStyle.id = 'dynamic-theme-style';
+                document.head.appendChild(dynamicStyle);
+            }
+            dynamicStyle.innerHTML = `
+                .btn-glow:hover, .btn-hero-primary:hover {
+                    box-shadow: 0 8px 30px ${primaryColor}66 !important;
+                }
+                .nav-auth-register {
+                    background: linear-gradient(135deg, ${primaryColor}, ${primaryColor}cc, ${primaryColor}99) !important;
+                    border: 1px solid ${primaryColor}66 !important;
+                    box-shadow: 0 4px 15px ${primaryColor}33 !important;
+                }
+                .nav-auth-register:hover {
+                    box-shadow: 0 8px 25px ${primaryColor}66 !important;
+                }
+                .nav-auth-login:hover {
+                    background: ${primaryColor}1f !important; /* สีจางๆ 12% */
+                }
+            `;
+
+            // เปลี่ยนสีฟอนต์ (Text Color)
+            if (config.textColor) {
+                document.body.style.color = config.textColor;
+                // บังคับเปลี่ยนสีข้อความในจุดที่ไม่ได้ใช้ตัวแปร
+                document.querySelectorAll('h1, p, .stat-n').forEach(el => {
+                    el.style.color = config.textColor;
+                });
+            }
+        }
+             // --- ส่วนจัดการสี (จากคำขอก่อนหน้า) ---
+            const primaryColor = config.themeColor || '#00d2ff';
+
+            });
+
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        const userRef = ref(db, 'users/' + user.uid);
+        onValue(userRef, (snapshot) => {
+            const data = snapshot.val();
+            const credits = (data && data.credits) ? data.credits : 0;
+            const displayName = user.email.split('@')[0];
+            
+            // --- ส่วนที่เพิ่ม: ตรวจสอบว่าเป็น Admin หรือไม่ ---
+            const isAdmin = data && data.role === 'admin';
+            const adminMenuItem = isAdmin 
+                ? `<li><a class="dropdown-item text-info" href="admin.html"><i class="fa-solid fa-user-shield me-2"></i>จัดการระบบ</a></li>
+                   <li><hr class="dropdown-divider"></li>` 
+                : '';
+            // ------------------------------------------
+
+            authArea.innerHTML = `
+                <div class="dropdown">
+                    <button class="nav-auth-btn nav-auth-login dropdown-toggle border-0" 
+                            type="button" 
+                            id="userMenu" 
+                            data-bs-toggle="dropdown" 
+                            aria-expanded="false"
+                            style="cursor: pointer; z-index: 9999;">
+                        <i class="fa-solid fa-circle-user me-2"></i> ${displayName}
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end shadow-lg mt-2">
+                        <li class="px-3 py-2">
+                            <div class="small text-white-50">ยอดเงินของคุณ</div>
+                            <div class="fw-bold text-primary">฿ ${credits.toLocaleString()}</div>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        
+                        ${adminMenuItem} <li><a class="dropdown-item" href="topup.html">เติมเงิน</a></li>
+                        <li><a class="dropdown-item" href="history.html">ประวัติการซื้อ</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="#" id="logout-btn">ออกจากระบบ</a></li>
+                    </ul>
+                </div>
+            `;
+
+            document.getElementById('logout-btn').addEventListener('click', () => {
+                signOut(auth).then(() => { window.location.href = "login.html"; });
+            });
+        }, (error) => {
+            console.error(error);
+            authArea.innerHTML = `<span class="text-white-50 small">${user.email.split('@')[0]} (Error DB)</span>`;
+        });
+    } else {
+        authArea.innerHTML = `
+            <a href="login.html" class="nav-auth-btn nav-auth-login">เข้าสู่ระบบ</a>
+            <a href="register.html" class="nav-auth-btn nav-auth-register">สมัครสมาชิก</a>
+        `;
+    }
+});
+
+    // --- แก้ไขระบบ PromptPay ตรวจสอบอัตโนมัติ ---
+document.getElementById('confirm-pp-btn').addEventListener('click', async () => {
+    const refNo = document.getElementById('pp-ref').value.trim();
+    const EASYSLIP_KEY = "7f2cd46f-6543-4740-b0f5-131039c9b676"; // ห้ามลืม!
+
+    if(!refNo) {
+        Swal.fire('แจ้งเตือน', 'กรุณากรอกเลขเลขอ้างอิงจากสลิป', 'warning');
+        return;
+    }
+
+    Swal.fire({
+        title: 'กำลังตรวจสอบสลิป...',
+        text: 'อาจใช้เวลาสักครู่ตามระบบธนาคาร',
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading()
+    });
+
+    try {
+        // ใช้ URL นี้ในการตรวจสอบเลข Reference (เช็คว่าสะกดถูกตามนี้)
+        const response = await fetch(`https://bill-payment-api.easyslip.com/api/v1/verify/reference/${refNo}`, {
+            method: 'GET',
+            headers: { 
+                'Authorization': `Bearer ${EASYSLIP_KEY}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const resData = await response.json();
+
+        // ถ้าเจอ 404 จาก API
+        if (response.status === 404) {
+            Swal.fire('ไม่พบข้อมูล', 'ไม่พบเลขสลิปนี้ในระบบธนาคาร กรุณาตรวจสอบเลขอีกครั้งหรือรอสักครู่', 'error');
+            return;
+        }
+
+        if (resData.status === 200) {
+            const amount = resData.data.amount;
+            
+            // ตรวจสอบการใช้ซ้ำใน Firebase
+            const checkRef = await get(ref(db, `topup_history/${refNo}`));
+            if (checkRef.exists()) {
+                Swal.fire('สลิปนี้ถูกใช้ไปแล้ว', 'เลขสลิปนี้เคยนำมาเติมเงินเรียบร้อยแล้ว', 'error');
+                return;
+            }
+
+            // อัปเดตเงินใน Database
+            const userRef = ref(db, `users/${userAccount.uid}`);
+            const userSnap = await get(userRef);
+            const currentCredits = (userSnap.exists() && userSnap.val().credits) ? userSnap.val().credits : 0;
+            
+            await update(userRef, { credits: currentCredits + amount });
+
+            // บันทึกประวัติ
+            await set(ref(db, `topup_history/${refNo}`), {
+                uid: userAccount.uid,
+                email: userAccount.email,
+                amount: amount,
+                date: new Date().toISOString()
+            });
+
+            Swal.fire({
+                icon: 'success',
+                title: 'เติมเงินสำเร็จ!',
+                text: `รับเครดิตเพิ่มจำนวน ฿${amount} เรียบร้อย`,
+                background: '#1a1d21', color: '#fff'
+            }).then(() => location.reload());
+
+        } else {
+            Swal.fire('ผิดพลาด', resData.message || 'ไม่สามารถตรวจสอบสลิปได้', 'error');
+        }
+    } catch (err) {
+        console.error("Fetch Error:", err);
+        Swal.fire('Error', 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ตรวจสอบได้', 'error');
+    }
+});
+
+    // --- 3. ระบบ Gift Voucher (EasySlip) ---
+    document.getElementById('gift-submit-btn').addEventListener('click', async () => {
+        const link = document.getElementById('gift-link').value.trim();
+
+        if(!link.includes('gift.truemoney.com')) {
+            Swal.fire('ลิงก์ไม่ถูกต้อง', '', 'error');
+            return;
+        }
+
+        Swal.fire({ title: 'กำลังตรวจสอบซอง...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
+        try {
+            const response = await fetch('https://bill-payment-api.easyslip.com/api/v1/truemoney/gift-vouchers/verify', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${EASYSLIP_KEY}` },
+                body: JSON.stringify({ url: link })
+            });
+
+            const resData = await response.json();
+
+            if (resData.status === 200) {
+                const amount = resData.data.amount;
+                
+                // เพิ่มเงินใน DB
+                const userRef = ref(db, `users/${userAccount.uid}`);
+                const snap = await get(userRef);
+                const current = (snap.exists() && snap.val().credits) ? snap.val().credits : 0;
+                
+                await update(userRef, { credits: current + amount });
+                
+                // บันทึกประวัติกันซ้ำ (ใช้รหัสซองเป็น Key)
+                const voucherCode = new URL(link).searchParams.get('v');
+                await set(ref(db, `topup_history/gift_${voucherCode}`), {
+                    uid: userAccount.uid,
+                    amount: amount,
+                    type: 'Gift',
+                    date: new Date().toISOString()
+                });
+
+                Swal.fire('สำเร็จ!', `เติมเงินเข้า ${amount} บาทเรียบร้อย`, 'success').then(() => location.reload());
+            } else {
+                Swal.fire('ผิดพลาด', resData.message || 'ลิงก์ถูกใช้ไปแล้ว', 'error');
+            }
+        } catch (err) {
+            Swal.fire('Error', 'ไม่สามารถติดต่อ API ได้', 'error');
+        }
+    });
+
+    // --- 4. ปุ่มสร้าง QR Code ---
+    document.getElementById('gen-qr-btn').addEventListener('click', () => {
+        const amount = document.getElementById('pp-amount').value;
+        if(!amount || amount <= 0) {
+            Swal.fire('ระบุยอดเงิน', '', 'warning');
+            return;
+        }
+        
+        const promptpayID = "0840235945"; // แก้เป็นเบอร์ของคุณ
+        const qrUrl = `https://promptpay.io/${promptpayID}/${amount}.png`;
+        
+        document.getElementById('qr-img').src = qrUrl;
+        document.getElementById('qr-result').classList.remove('d-none');
+        Swal.fire({ icon: 'success', title: 'สร้าง QR สำเร็จ', timer: 1000, showConfirmButton: false });
+    });
+        // --- ระบบ EasySlip (Gift Voucher) ---
+        document.getElementById('gift-submit-btn').addEventListener('click', async () => {
+            const link = document.getElementById('gift-link').value;
+            const EASYSLIP_KEY = "7f2cd46f-6543-4740-b0f5-131039c9b676"; // เอามาจาก easyslip.com
+
+            if(!link.includes('gift.truemoney.com')) return Swal.fire('ลิงก์ไม่ถูกต้อง', '', 'error');
+
+            Swal.showLoading();
+
+            try {
+                const response = await fetch('https://bill-payment-api.easyslip.com/api/v1/truemoney/gift-vouchers/verify', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${EASYSLIP_KEY}` },
+                    body: JSON.stringify({ url: link })
+                });
+
+                const resData = await response.json();
+
+                if (resData.status === 200) {
+                    const amount = resData.data.amount;
+                    
+                    // เพิ่มเงินใน DB
+                    const userRef = ref(db, `users/${userAccount.uid}`);
+                    const snap = await get(userRef);
+                    const current = snap.val().credits || 0;
+                    
+                    await update(userRef, { credits: current + amount });
+                    
+                    Swal.fire('สำเร็จ!', `เติมเงินเข้า ${amount} บาทเรียบร้อย`, 'success');
+                } else {
+                    Swal.fire('ผิดพลาด', resData.message || 'ลิงก์ถูกใช้ไปแล้ว', 'error');
+                }
+            } catch (err) {
+                Swal.fire('Error', 'ไม่สามารถติดต่อ API ได้', 'error');
+            }
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

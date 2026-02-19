@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>...</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <style>
+        :root {
+            --primary: #00d2ff;
+            --secondary: #3a7bd5;
+            --dark: #06070a; /* สีพื้นหลัง */
+            --text-main: #ffffff; /* สีฟอนต์ */
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            background-color: var(--dark);
+            color: var(--text-main);
+            font-family: 'Kanit', sans-serif;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(0, 210, 255, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(58, 123, 213, 0.05) 0%, transparent 40%);
+        }
+
+        /* --- SNOWFALL EFFECT --- */
+        .snow-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+        .snowflake { position: absolute; top: -10px; background: white; border-radius: 50%; filter: blur(1px); opacity: 0.2; animation: fall linear infinite; }
+        @keyframes fall {
+            0% { transform: translateY(0) translateX(0); opacity: 0; }
+            10% { opacity: 0.2; }
+            100% { transform: translateY(105vh) translateX(50px); opacity: 0; }
+        }
+        /* กำหนดค่าหิมะให้เหมือนเดิม */
+        .snowflake:nth-child(1) { width: 4px; height: 4px; left: 10%; animation-duration: 10s; }
+        .snowflake:nth-child(2) { width: 5px; height: 5px; left: 30%; animation-duration: 15s; animation-delay: 2s; }
+        .snowflake:nth-child(3) { width: 3px; height: 3px; left: 50%; animation-duration: 12s; animation-delay: 4s; }
+        .snowflake:nth-child(4) { width: 4px; height: 4px; left: 70%; animation-duration: 18s; animation-delay: 1s; }
+        .snowflake:nth-child(5) { width: 3px; height: 3px; left: 90%; animation-duration: 14s; animation-delay: 5s; }
+
+        /* --- NAVBAR CENTERED --- */
+        .navbar-modern { background: rgba(6, 7, 10, 0.7); backdrop-filter: blur(20px); border-bottom: 1px solid var(--glass-border); z-index: 1000; }
+        .nav-auth-btn {
+            display: flex; align-items: center; gap: 10px; padding: 10px 24px; margin: 0 8px;
+            border-radius: 14px; font-weight: 600; font-size: 13.5px; text-decoration: none !important;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1); height: 44px; position: relative; overflow: hidden;
+        }
+        .nav-auth-shine { position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent); transition: left 0.5s ease; }
+        .nav-auth-btn:hover .nav-auth-shine { left: 100%; }
+        .nav-auth-login { background: rgba(255, 255, 255, 0.04); color: rgba(255, 255, 255, 0.85) !important; backdrop-filter: blur(8px); }
+        .nav-auth-register { background: linear-gradient(135deg, #00d2ff, #3a7bd5, #8beaff); border: 1px solid rgba(0, 210, 255, 0.4) !important; color: #fff !important; box-shadow: 0 4px 15px var(--purple-glow); }
+
+
+
+        /* ปรับแต่ง Scrollbar ให้ดูสวยเข้ากับธีม */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--dark); }
+        ::-webkit-scrollbar-thumb { background: var(--purple); border-radius: 10px; }
+
+        /* --- CATEGORY HEADER BAR --- */
+        .category-header-bar {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 18px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 40px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+        }
+        .header-title { font-weight: 600; font-size: 1.1rem; display: flex; align-items: center; gap: 12px; letter-spacing: 0.5px; }
+        .header-title i { color: var(--purple); filter: drop-shadow(0 0 5px var(--purple)); }
+        .btn-back {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid var(--glass-border); color: #bbb; padding: 7px 18px; border-radius: 10px;
+            font-size: 13px; transition: 0.3s; text-decoration: none;
+        }
+        .btn-back:hover { background: rgba(255, 255, 255, 0.12); color: #fff; transform: translateX(-3px); }
+
+        /* --- WIDE BANNER CARD --- */
+        .category-card-wide {
+            display: block;
+            position: relative;
+            border-radius: 15px;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            aspect-ratio: 16 / 5.5;
+            background: #000;
+        }
+        .category-card-wide img {
+            width: 100%; height: 100%; object-fit: cover; transition: transform 0.7s ease;
+        }
+        .category-card-wide:hover {
+            transform: translateY(-8px);
+            border-color: var(--primary);
+        }
+        .category-card-wide:hover img { transform: scale(1.05); }
+
+        .card-corner-icon {
+            position: absolute; top: 12px; right: 12px;
+            font-size: 14px; color: var(--primary); opacity: 0.6; z-index: 2;
+        }
+
+        /* แสงวิ่งที่ตัวการ์ด */
+        .card-shine {
+            position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+            transform: skewX(-25deg); transition: 0.5s;
+        }
+        .category-card-wide:hover .card-shine { left: 150%; }
+
+        /* --- TEXT OVERLAY ON IMAGE --- */
+        .category-card-wide {
+            position: relative;
+            /* ... (คงค่าเดิมไว้) ... */
+        }
+
+        /* สร้างเงาดำจางๆ ด้านล่างภาพเพื่อให้ตัวหนังสือเด่น */
+        .card-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.3) 40%, transparent 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 20px 25px;
+            z-index: 1;
+        }
+
+        .card-info {
+            transform: translateY(0);
+            transition: 0.4s ease;
+        }
+
+        .card-title {
+            font-size: 1.6rem;
+            font-weight: 600;
+            color: #fff;
+            margin: 0;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+
+        .card-subtitle {
+            font-size: 0.9rem;
+            color: var(--primary);
+            opacity: 0.8;
+            letter-spacing: 1px;
+        }
+
+        /* Hover Effect: ให้ข้อความขยับขึ้นเล็กน้อย */
+        .category-card-wide:hover .card-info {
+            transform: translateY(-5px);
+        }
+
+        .category-card-wide:hover .card-title {
+            color: var(--primary); /* เปลี่ยนสีหัวข้อตอนชี้ */
+        }
+        
+        .dropdown-menu-dark {
+            background: rgba(15, 16, 20, 0.95) !important;
+            backdrop-filter: blur(15px);
+        }
+        .dropdown-item {
+            border-radius: 8px;
+            transition: 0.2s;
+            font-size: 14px;
+        }
+        .dropdown-item:hover {
+            background: rgba(0, 210, 255, 0.1) !important;
+            color: var(--primary) !important;
+            transform: translateX(5px);
+        }
+
+    </style>
+</head>
+<body>
+    
+     <div id="loading-screen" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #06070a; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; transition: opacity 0.5s ease;">
+    <div class="spinner-border" style="width: 3rem; height: 3rem; color: #fff;" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+    <p style="margin-top: 15px; color: #fff; font-family: 'Kanit', sans-serif; letter-spacing: 1px; opacity: 0.8;">Loading...</p>
+    </div>
+
+    <div class="snow-container">
+        <div class="snowflake" style="left:10%; width:4px; height:4px; animation-duration:10s;"></div>
+        <div class="snowflake" style="left:35%; width:5px; height:5px; animation-duration:14s; animation-delay:2s;"></div>
+        <div class="snowflake" style="left:55%; width:3px; height:3px; animation-duration:12s; animation-delay:4s;"></div>
+        <div class="snowflake" style="left:75%; width:4px; height:4px; animation-duration:16s; animation-delay:1s;"></div>
+        <div class="snowflake" style="left:92%; width:3px; height:3px; animation-duration:13s; animation-delay:5s;"></div>
+    </div>
+
+    <nav class="navbar navbar-modern py-4">
+        <div class="container justify-content-center">
+            <div id="auth-area" class="d-flex">
+                <div class="spinner-border spinner-border-sm text-info" role="status"></div>
+            </div>
+        </div>
+    </nav>
+
+    <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+    document.addEventListener('keydown', function(e) {
+    // 1. ป้องกัน Ctrl + S (Save Page)
+    if ((e.ctrlKey || e.metaKey) && (e.key === 's' || e.key === 'S' || e.keyCode === 83)) {
+        e.preventDefault();
+        // showAlert("ไม่อนุญาตให้บันทึกหน้าเว็บ", "danger"); // เปิดใช้ถ้าต้องการให้แจ้งเตือน
+        return false;
+    }
+
+    // 2. ป้องกัน F12 (DevTools)
+    if (e.key === 'F12' || e.keyCode === 123) {
+        e.preventDefault();
+        return false;
+    }
+
+    // 3. ป้องกัน Ctrl + Shift + I / J / C (Inspect/Console)
+    if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C' || e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) {
+        e.preventDefault();
+        return false;
+    }
+
+    // 4. ป้องกัน Ctrl + U (View Source)
+    if ((e.ctrlKey || e.metaKey) && (e.key === 'u' || e.key === 'U' || e.keyCode === 85)) {
+        e.preventDefault();
+        return false;
+    }
+}, false);
+
+    // ใช้ Config เดียวกับหน้า Register/Login
+    const firebaseConfig = {
+        apiKey: "AIzaSyAu_tpFJkolV90YBMFwzSUIu8KnusAB8mg",
+        authDomain: "verify-hiz.firebaseapp.com",
+        databaseURL: "https://verify-hiz-default-rtdb.firebaseio.com",
+        projectId: "verify-hiz",
+        storageBucket: "verify-hiz.firebasestorage.app",
+        messagingSenderId: "1001871666471",
+        appId: "1:1001871666471:web:daea600bd157f907634d02",
+        measurementId: "G-2F4W88C6HL"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getDatabase(app);
+    const authArea = document.getElementById('auth-area');
+
+    onValue(ref(db, 'config'), (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+            // เปลี่ยนชื่อแบรนด์ใน Navbar
+            const brand = document.querySelector('.nav-brand span');
+            if (brand && data.webName) brand.innerText = data.webName;
+
+            // เปลี่ยนรูป Banner (ถ้าใน HTML ของคุณมี id="shop-banner")
+            const banner = document.getElementById('shop-banner');
+            if (banner && data.bannerUrl) banner.src = data.bannerUrl;
+        }
+    });
+
+    onValue(ref(db, 'config'), (snapshot) => {
+        const config = snapshot.val();
+        if (config) {
+
+            if (config.themeColor) {
+                const pColor = config.themeColor;
+                const sColor = config.secondaryColor || pColor; 
+                document.documentElement.style.setProperty('--primary', pColor);
+                document.documentElement.style.setProperty('--secondary', sColor);
+                document.documentElement.style.setProperty('--purple-glow', pColor + '4d');
+                // พื้นหลังสีเดียว (Solid) ตามที่คุณต้องการ
+                document.body.style.backgroundImage = `
+                    radial-gradient(circle at 20% 30%, ${pColor}0d 0%, transparent 40%),
+                    radial-gradient(circle at 80% 70%, ${sColor}0d 0%, transparent 40%)
+                `;
+            }
+
+            // --- ส่วนที่เพิ่มใหม่: ปิดหน้าโหลด ---
+            const loadingScreen = document.getElementById('loading-screen');
+            if (loadingScreen) {
+                loadingScreen.style.opacity = '0'; // ค่อยๆ จางออก
+                setTimeout(() => {
+                    loadingScreen.style.display = 'none'; // นำออกจากหน้าจอ
+                }, 500); // ระยะเวลาต้องเท่ากับ transition ใน style
+            }
+            // แก้ไขชื่อเว็บไซต์ในจุดต่างๆ
+            if (config.siteName) {
+                document.title = config.siteName;
+                const siteNameElements = [
+                    document.getElementById('site-name-display'), // ใน Hero
+                    document.getElementById('site-name-nav')      // ใน Navbar (ถ้ามี)
+                ];
+                siteNameElements.forEach(el => { if(el) el.innerText = config.siteName; });
+            }
+            
+            // แก้ไขสีธีมหลัก (ส่งผลต่อ Glow และปุ่ม)
+            if (config.themeColor) {
+                document.documentElement.style.setProperty('--primary', config.themeColor);
+            }
+
+            const primaryColor = config.themeColor || '#00d2ff';
+            const bgColor = config.bgColor || '#06070a';
+
+            // 1. อัปเดตสีหลัก (Theme Color)
+            document.documentElement.style.setProperty('--primary', primaryColor);
+
+            // 2. อัปเดต Background Image (Radial Gradient) แบบไดนามิก
+            // เราจะใช้สี Theme ที่เลือก มาทำเป็นแสงจางๆ (Alpha 0.05 - 0.1)
+            document.body.style.backgroundImage = `
+                radial-gradient(circle at 20% 30%, ${primaryColor}1a 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, ${primaryColor}0d 0%, transparent 40%)
+            `;
+            document.body.style.backgroundColor = bgColor;
+
+            // 3. จัดการสีปุ่มตอน Hover และปุ่ม Register
+            // สร้าง Style Tag พิเศษเพื่อคุม Hover Shadow และ Gradient ปุ่ม Register
+            let dynamicStyle = document.getElementById('dynamic-theme-style');
+            if (!dynamicStyle) {
+                dynamicStyle = document.createElement('style');
+                dynamicStyle.id = 'dynamic-theme-style';
+                document.head.appendChild(dynamicStyle);
+            }
+            dynamicStyle.innerHTML = `
+                .btn-glow:hover, .btn-hero-primary:hover {
+                    box-shadow: 0 8px 30px ${primaryColor}66 !important;
+                }
+                .nav-auth-register {
+                    background: linear-gradient(135deg, ${primaryColor}, ${primaryColor}cc, ${primaryColor}99) !important;
+                    border: 1px solid ${primaryColor}66 !important;
+                    box-shadow: 0 4px 15px ${primaryColor}33 !important;
+                }
+                .nav-auth-register:hover {
+                    box-shadow: 0 8px 25px ${primaryColor}66 !important;
+                }
+                .nav-auth-login:hover {
+                    background: ${primaryColor}1f !important; /* สีจางๆ 12% */
+                }
+            `;
+
+            // เปลี่ยนสีฟอนต์ (Text Color)
+            if (config.textColor) {
+                document.body.style.color = config.textColor;
+                // บังคับเปลี่ยนสีข้อความในจุดที่ไม่ได้ใช้ตัวแปร
+                document.querySelectorAll('h1, p, .stat-n').forEach(el => {
+                    el.style.color = config.textColor;
+                });
+            }
+        }
+             // --- ส่วนจัดการสี (จากคำขอก่อนหน้า) ---
+            const primaryColor = config.themeColor || '#00d2ff';
+
+            });
+
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        const userRef = ref(db, 'users/' + user.uid);
+        onValue(userRef, (snapshot) => {
+            const data = snapshot.val();
+            const credits = (data && data.credits) ? data.credits : 0;
+            const displayName = user.email.split('@')[0];
+            
+            // --- ส่วนที่เพิ่ม: ตรวจสอบว่าเป็น Admin หรือไม่ ---
+            const isAdmin = data && data.role === 'admin';
+            const adminMenuItem = isAdmin 
+                ? `<li><a class="dropdown-item text-info" href="admin.html"><i class="fa-solid fa-user-shield me-2"></i>จัดการระบบ</a></li>
+                   <li><hr class="dropdown-divider"></li>` 
+                : '';
+            // ------------------------------------------
+
+            authArea.innerHTML = `
+                <div class="dropdown">
+                    <button class="nav-auth-btn nav-auth-login dropdown-toggle border-0" 
+                            type="button" 
+                            id="userMenu" 
+                            data-bs-toggle="dropdown" 
+                            aria-expanded="false"
+                            style="cursor: pointer; z-index: 9999;">
+                        <i class="fa-solid fa-circle-user me-2"></i> ${displayName}
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end shadow-lg mt-2">
+                        <li class="px-3 py-2">
+                            <div class="small text-white-50">ยอดเงินของคุณ</div>
+                            <div class="fw-bold text-primary">฿ ${credits.toLocaleString()}</div>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        
+                        ${adminMenuItem} <li><a class="dropdown-item" href="topup.html">เติมเงิน</a></li>
+                        <li><a class="dropdown-item" href="history.html">ประวัติการซื้อ</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="#" id="logout-btn">ออกจากระบบ</a></li>
+                    </ul>
+                </div>
+            `;
+
+            document.getElementById('logout-btn').addEventListener('click', () => {
+                signOut(auth).then(() => { window.location.href = "login.html"; });
+            });
+        }, (error) => {
+            console.error(error);
+            authArea.innerHTML = `<span class="text-white-50 small">${user.email.split('@')[0]} (Error DB)</span>`;
+        });
+    } else {
+        authArea.innerHTML = `
+            <a href="login.html" class="nav-auth-btn nav-auth-login">เข้าสู่ระบบ</a>
+            <a href="register.html" class="nav-auth-btn nav-auth-register">สมัครสมาชิก</a>
+        `;
+    }
+});
+</script>
+
+    <div class="container mb-5">
+        <div class="category-header-bar">
+            <div class="header-title">
+                <i class="fa-solid fa-layer-group"></i>
+                <span>หมวดหมู่สินค้าทั้งหมด</span>
+            </div>
+            <a href="index.html" class="btn-back">
+                <i class="fa-solid fa-chevron-left me-1"></i> ย้อนกลับ
+            </a>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-6">
+                <a href="product1.html" class="category-card-wide">
+                    <img src="#" alt="Program">
+                    
+                    <div class="card-overlay">
+                        <div class="card-info">
+                            <span class="card-subtitle">PROJECT</span>
+                            <h3 class="card-title">FIVE M PROJECT</h3>
+                        </div>
+                    </div>
+
+                    <i class="fa-solid fa-shapes card-corner-icon"></i>
+                    <div class="card-shine"></div>
+                </a>
+            </div>
+
+            <div class="col-md-6">
+                <a href="#" class="category-card-wide">
+                    <img src="#" alt="Random Account">
+                    
+                    <div class="card-overlay">
+                        <div class="card-info">
+                            <span class="card-subtitle">UNBAN HUB</span>
+                            <h3 class="card-title">UNBAN</h3>
+                        </div>
+                    </div>
+
+                    <i class="fa-solid fa-shapes card-corner-icon"></i>
+                    <div class="card-shine"></div>
+                </a>
+            </div>
+
+            <div class="col-md-6">
+                <a href="#" class="category-card-wide">
+                    <img src="#" alt="Cheating">
+
+                    <div class="card-overlay">
+                        <div class="card-info">
+                            <span class="card-subtitle">RANDOM SYSTEM</span>
+                            <h3 class="card-title">สุ่มรหัส ROV</h3>
+                        </div>
+                    </div>
+
+                    <i class="fa-solid fa-shapes card-corner-icon"></i>
+                    <div class="card-shine"></div>
+                </a>
+            </div>
+
+            <div class="col-md-6">
+                <a href="#" class="category-card-wide">
+                    <img src="#" alt="App Premium">
+
+                    <div class="card-overlay">
+                        <div class="card-info">
+                            <span class="card-subtitle">PREMIUM</span>
+                            <h3 class="card-title">APP ACCOUNT</h3>
+                        </div>
+                    </div>
+
+                    <i class="fa-solid fa-shapes card-corner-icon"></i>
+                    <div class="card-shine"></div>
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
