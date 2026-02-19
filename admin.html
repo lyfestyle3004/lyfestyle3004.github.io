@@ -5,294 +5,482 @@
     <title>ADMIN DASHBOARD</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&family=Outfit:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
-        :root { --admin-primary: #00d2ff; --sidebar-width: 260px; }
-        body { background: #06070a; color: white; font-family: 'Kanit', sans-serif; overflow-x: hidden; }
-        
-        /* Sidebar Style */
+        :root {
+            --primary: #00d2ff;
+            --primary-glow: rgba(0, 210, 255, 0.4);
+            --bg-dark: #0a0c10;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --sidebar-width: 280px;
+            --accent: #7000ff;
+        }
+
+        body {
+            background: radial-gradient(circle at top right, #1a1f2c, var(--bg-dark));
+            color: #e0e6ed;
+            font-family: 'Outfit', 'Kanit', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* --- Custom Scrollbar --- */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-dark); }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+        /* --- Sidebar Modern --- */
         .sidebar {
             width: var(--sidebar-width);
-            height: 100vh;
+            height: calc(100vh - 40px);
             position: fixed;
-            left: 0;
-            top: 0;
-            background: rgba(255, 255, 255, 0.03);
-            border-right: 1px solid rgba(255, 255, 255, 0.05);
-            padding: 20px;
+            left: 20px;
+            top: 20px;
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 24px;
+            padding: 30px 15px;
             z-index: 1000;
+            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
+
+        .sidebar-brand {
+            padding: 0 15px 30px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, var(--primary), #fff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+        }
+
         .nav-link {
-            color: rgba(255, 255, 255, 0.6);
-            padding: 12px 15px;
-            border-radius: 10px;
-            margin-bottom: 5px;
-            transition: 0.3s;
-            cursor: pointer;
-        }
-        .nav-link:hover, .nav-link.active {
-            background: rgba(0, 210, 255, 0.1);
-            color: var(--admin-primary);
+            color: rgba(255, 255, 255, 0.5);
+            padding: 14px 20px;
+            border-radius: 16px;
+            margin-bottom: 8px;
+            transition: 0.3s all;
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+            border: 1px solid transparent;
         }
 
-        /* Content Area */
-        .main-content { margin-left: var(--sidebar-width); padding: 40px; }
-        .admin-card { 
-            background: rgba(255,255,255,0.03); 
-            border: 1px solid rgba(255,255,255,0.08); 
-            border-radius: 20px; 
-            padding: 30px; 
-            backdrop-filter: blur(10px);
+        .nav-link i { font-size: 1.2rem; width: 30px; }
+
+        .nav-link:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateX(5px);
         }
+
+        .nav-link.active {
+            color: #fff;
+            background: linear-gradient(90deg, rgba(0, 210, 255, 0.2), transparent);
+            border-left: 4px solid var(--primary);
+            box-shadow: 15px 0 30px rgba(0, 210, 255, 0.1);
+        }
+
         
-        .input-admin { 
-            background: rgba(0,0,0,0.3); 
-            border: 1px solid rgba(255,255,255,0.1); 
-            color: white; 
-            border-radius: 12px; 
-            padding: 12px; 
-            width: 100%; 
+        .page-header { margin-bottom: 40px; }
+        .page-header h2 { font-weight: 700; font-size: 2.2rem; letter-spacing: -1px; }
+
+        /* --- Premium Cards --- */
+        .admin-card {
+            background: rgba(15, 18, 24, 0.6); /* ปรับให้สีดำเข้มขึ้น */
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 24px;
+            backdrop-filter: blur(15px); /* เพิ่มความเบลอให้ดูพรีเมียม */
+        }
+
+        .admin-card:hover { border-color: rgba(0, 210, 255, 0.2); }
+
+        /* --- Inputs --- */
+        .input-label {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .input-admin {
+            background: rgba(0,0,0,0.4);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #fff;
+            border-radius: 14px;
+            padding: 14px 18px;
+            width: 100%;
             transition: 0.3s;
         }
-        .input-admin:focus { outline: none; border-color: var(--admin-primary); }
-        
+
+        .input-admin:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 15px var(--primary-glow);
+            background: rgba(0,0,0,0.6);
+        }
+
+        /* --- Buttons --- */
+        .action-bar {
+            position: fixed;
+            bottom: 30px;
+            right: 40px;
+            background: rgba(10, 12, 16, 0.8);
+            padding: 15px 25px;
+            border-radius: 100px;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            gap: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            z-index: 1001;
+        }
+
+        .btn-modern {
+            border-radius: 100px;
+            padding: 12px 28px;
+            font-weight: 600;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-save {
+            background: var(--primary);
+            border: none;
+            color: #000;
+            box-shadow: 0 0 20px var(--primary-glow);
+        }
+
+        .btn-save:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 30px var(--primary-glow);
+            background: #fff;
+        }
+
+        /* --- Table Styling --- */
+        /* แก้ไขสีตารางให้โปร่งใส ไม่ให้ดึงสีเทาเริ่มต้นของ Bootstrap มาใช้ */
+        .table {
+            --bs-table-bg: transparent !important; /* บังคับให้พื้นหลังตารางใส */
+            --bs-table-color: #fff !important;
+            margin-bottom: 0;
+        }
+
+        /* ปรับส่วนหัวตารางให้ดูสะอาดตา */
+        .table thead th {
+            background: rgba(0, 0, 0, 0.2); /* เน้นหัวตารางด้วยสีดำจางๆ */
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+            color: var(--primary) !important; /* ใช้สีฟ้าที่คุณตั้งไว้ */
+            font-weight: 600;
+            padding: 20px 15px;
+        }
+
+        /* ปรับแถวตารางให้ดูสลับสีแบบเนียนๆ */
+        .table tbody tr {
+            background: transparent !important;
+            transition: 0.3s ease;
+        }
+
+        .table tbody tr:hover {
+            background: rgba(255, 255, 255, 0.03) !important; /* เวลาเอาเมาส์ชี้ให้สว่างขึ้นนิดเดียว */
+        }
+
+        .table td {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03) !important;
+            padding: 18px 15px;
+        }
+        .table td:first-child { border-radius: 15px 0 0 15px; }
+        .table td:last-child { border-radius: 0 15px 15px 0; }
+
         .section-panel { display: none; }
-        .section-panel.active { display: block; animation: fadeIn 0.5s ease; }
-        
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .section-panel.active { display: block; animation: slideUp 0.6s cubic-bezier(0.23, 1, 0.32, 1); }
 
-        #reset-config:hover {
-            background-color: rgba(255, 255, 255, 0.2) !important; /* พื้นหลังเหลืองจางๆ */
-            color: #ffffff !important; /* ตัวหนังสือสีเหลืองเหมือนเดิม */
-            border-color: #ffffff !important; /* ขอบสีเหลือง */
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2) !important; /* เพิ่มแสงฟุ้งรอบปุ่ม */
-            transform: translateY(-2px); /* ลอยขึ้นเล็กน้อย */
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        /* แถม: ปรับปุ่มบันทึกตอน Hover ให้ดูพรีเมียมขึ้น */
-        #save-all-config:hover {
-            background-color: var(--admin-primary) !important;
-            border-color: var(--admin-primary) !important;
-            box-shadow: 0 0 25px rgba(0, 210, 255, 0.4) !important;
-            transform: translateY(-2px);
-            transition: all 0.3s ease;
+        .badge-role {
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        /* ล็อกระยะหน้าจอหลักให้แม่นยำ */
+        .main-content {
+            margin-left: calc(var(--sidebar-width) + 100px) !important;
+            width: calc(100% - (var(--sidebar-width) + 100px)) !important;
+            padding: 20px 40px !important;
+            box-sizing: border-box; /* ป้องกัน Padding ดันจน UI ล้น */
+            min-height: 100vh;
         }
 
-        .input-group-text {
-            border-right: none !important;
+        /* กรอบแชท - ล็อกความกว้างสูงสุดป้องกันการแผ่จนเบี้ยว */
+        .chat-wrapper-mini {
+            display: flex;
+            width: 100%;
+            max-width: 900px; 
+            height: 600px;
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
         }
-        .form-control {
-            border-left: none !important;
+
+        /* ฝั่งรายชื่อ (ซ้าย) - ล็อกความกว้างตายตัว 260px */
+        .chat-sidebar-mini {
+            width: 260px;
+            min-width: 260px;
+            background: rgba(0, 0, 0, 0.3);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            flex-direction: column;
         }
-        .form-control:focus {
-            border-color: var(--admin-primary) !important;
-            background: rgba(0, 210, 255, 0.05) !important;
+
+        /* ฝั่งพื้นที่คุย (ขวา) - ยืดหยุ่นตามพื้นที่ที่เหลือ */
+        .chat-main-mini {
+            flex: 1; 
+            min-width: 0; /* ป้องกันข้อความยาวดันจน UI แตก */
+            display: flex;
+            flex-direction: column;
         }
-        .input-group:focus-within .input-group-text {
-            border-color: var(--admin-primary) !important;
-            color: var(--admin-primary) !important;
+
+        /* การจัดวาง Bubble */
+        .chat-content-mini {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
         }
-        .card {
-            transition: all 0.3s ease;
+
+        .bubble-mini {
+            max-width: 80%;
+            padding: 10px 16px;
+            border-radius: 18px;
+            font-size: 14px;
+            word-wrap: break-word;
         }
-        .card:hover {
-            border-color: rgba(0, 210, 255, 0.3) !important;
+
+        .admin-bubble {
+            align-self: flex-end; /* ชิดขวา */
+            background: var(--primary);
+            color: #000;
+            border-bottom-right-radius: 4px;
+        }
+
+        .user-bubble {
+            align-self: flex-start; /* ชิดซ้าย */
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border-bottom-left-radius: 4px;
+        }
+        /* ส่วนช่องพิมพ์ข้อความด้านล่าง */
+        .chat-input-area-mini {
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
         }
     </style>
 </head>
 <body>
 
     <div class="sidebar">
-        <h4 class="mb-4 px-2"><i class="fa-solid fa-gauge-high text-primary me-2"></i> Admin</h4>
+        <div class="sidebar-brand">
+            <i class="fa-solid fa-users-gear me-3"></i> ADMIN PANEL
+        </div>
         <div class="nav-link active" onclick="showSection('general')">
-            <i class="fa-solid fa-house-chimney me-2"></i> ตั้งค่าหน้าหลัก
+            <i class="fa-solid fa-house-user"></i> <span>หน้าหลัก</span>
         </div>
         <div class="nav-link" onclick="showSection('appearance')">
-            <i class="fa-solid fa-palette me-2"></i> ปรับแต่งสี & ธีม
+            <i class="fa-solid fa-wand-magic-sparkles"></i> <span>ปรับแต่งธีม</span>
         </div>
         <div class="nav-link" onclick="showSection('systems')">
-            <i class="fa-solid fa-server me-2"></i> ระบบ & Webhook
+            <i class="fa-solid fa-terminal"></i> <span>ระบบ & บอท</span>
         </div>
+        <a href="adminchat.html" class="nav-link" style="text-decoration: none;">
+            <i class="fa-solid fa-comments"></i> <span>จัดการแชท</span>
+        </a>
         <div class="nav-link" onclick="showSection('users-manage')">
-            <i class="fa-solid fa-users-gear me-2"></i> จัดการสมาชิก
+            <i class="fa-solid fa-user-shield"></i> <span>จัดการสมาชิก</span>
         </div>
         <div class="nav-link" onclick="showSection('payment-manage')">
-            <i class="fa-solid fa-money-check-dollar me-2"></i> ประวัติการเติมเงิน
+            <i class="fa-solid fa-wallet"></i> <span>ประวัติรายได้</span>
         </div>
-        <hr class="opacity-10">
-        <a href="index.html" class="nav-link text-info">
-            <i class="fa-solid fa-eye me-2"></i> ดูหน้าเว็บ
-        </a>
+        
+        <div style="position: absolute; bottom: 30px; width: calc(100% - 30px);">
+            <a href="index.html" class="nav-link text-info">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i> <span>เปิดหน้าเว็บ</span>
+            </a>
+        </div>
     </div>
 
     <div class="main-content">
         <div id="general" class="section-panel active">
-            <h2 class="mb-4">ตั้งค่าข้อมูลหน้าหลัก</h2>
+            <div class="page-header">
+                <h2>ศูนย์รวมการตั้งค่า</h2>
+                <p class="text-white-50">ปรับแต่งข้อมูลพื้นฐานและสถิติของร้านค้า</p>
+            </div>
             <div class="admin-card">
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label class="small text-white-50 mb-2">
-                            <i class="fa-solid fa-globe me-1"></i> ชื่อเว็บไซต์ (Site Name)
-                        </label>
-                        <input type="text" id="conf-sitename" class="input-admin" placeholder="ชื่อร้านของคุณ">
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <label class="input-label">ชื่อแบรนด์ของคุณ</label>
+                        <input type="text" id="conf-sitename" class="input-admin" placeholder="Site Name">
                     </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="small text-white-50 mb-2">
-                            <i class="fa-solid fa-wand-magic-sparkles me-1"></i> คำโปรยเน้นย้ำ (Accent Text)
-                        </label>
-                        <input type="text" id="conf-accenttext" class="input-admin" placeholder="เช่น GAMING SOLUTION">
+                    <div class="col-md-6">
+                        <label class="input-label">ข้อความอธิบาย</label>
+                        <input type="text" id="conf-accenttext" class="input-admin" placeholder="เช่น BEST QUALITY">
                     </div>
-
-                    <div class="col-md-12 mb-3">
-                        <label class="small text-white-50 mb-2">
-                            <i class="fa-brands fa-discord me-1"></i> ลิงก์ Discord
-                        </label>
-                        <input type="text" id="conf-discord-link" class="input-admin" placeholder="https://discord.gg/xxxx">
+                    <div class="col-md-12">
+                        <label class="input-label">ลิงก์เข้าร่วม Discord</label>
+                        <input type="text" id="conf-discord-link" class="input-admin" placeholder="https://discord.gg/...">
                     </div>
-
-                    <div class="col-md-6 mb-3">
-                        <label class="small text-white-50 mb-2">
-                            <i class="fa-solid fa-users me-1"></i> ตัวเลขสถิติ 1 (Active Users)
-                        </label>
-                        <input type="text" id="conf-stat1-value" class="input-admin" placeholder="เช่น 1,500">
+                    <div class="col-md-6">
+                        <label class="input-label">สถิติผู้ใช้งาน (รีเช็ตทั้งหมดเป็นค่า 0 จะแสดงข้อมูลจริง)</label>
+                        <input type="text" id="conf-stat1-value" class="input-admin">
                     </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="small text-white-50 mb-2">
-                            <i class="fa-solid fa-cart-check me-1"></i> ตัวเลขสถิติ 2 (Orders Completed)
-                        </label>
-                        <input type="text" id="conf-stat2-value" class="input-admin" placeholder="เช่น 25,000">
+                    <div class="col-md-6">
+                        <label class="input-label">สถิติการขาย (รีเช็ตทั้งหมดเป็นค่า 0 จะแสดงข้อมูลจริง)</label>
+                        <input type="text" id="conf-stat2-value" class="input-admin">
                     </div>
-
-                    <div class="col-md-12 mb-3">
-                        <label class="small text-white-50 mb-2">
-                            <i class="fa-solid fa-quote-left me-1"></i> คำอธิบายร้านค้า (Site Description)
-                        </label>
-                        <textarea id="conf-sitedesc" class="input-admin" rows="3" placeholder="เขียนคำอธิบายสั้นๆ เกี่ยวกับร้านค้าของคุณ"></textarea>
+                    <div class="col-md-12">
+                        <label class="input-label">คำอธิบายร้านค้า</label>
+                        <textarea id="conf-sitedesc" class="input-admin" rows="4"></textarea>
                     </div>
                 </div>
             </div>
         </div>
 
         <div id="appearance" class="section-panel">
-            <h2 class="mb-4">ปรับแต่งสี & ธีม</h2>
+            <div class="page-header">
+                <h2>รูปลักษณ์ & ธีม</h2>
+                <p class="text-white-50">กำหนดโทนสีของระบบให้เป็นสไตล์คุณ</p>
+            </div>
             <div class="admin-card">
-                <div class="row">
-                    <div class="col-md-4 mb-4">
-                        <label class="small text-white-50 mb-2">สีธีมหลัก (Buttons/Glow)</label>
-                        <input type="color" id="conf-color" class="form-control form-control-color w-100" style="height:50px; background:none; border: 1px solid rgba(255,255,255,0.1);">
-                    </div>
-                    <div class="col-md-4 mb-4">
-                        <label class="small text-white-50 mb-2">สีพื้นหลัง (Background)</label>
-                        <input type="color" id="conf-bg-color" class="form-control form-control-color w-100" style="height:50px; background:none; border: 1px solid rgba(255,255,255,0.1);">
-                    </div>
-                    <div class="col-md-4 mb-4">
-                        <label class="small text-white-50 mb-2">สีฟอนต์ (Text Color)</label>
-                        <input type="color" id="conf-text-color" class="form-control form-control-color w-100" style="height:50px; background:none; border: 1px solid rgba(255,255,255,0.1);">
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="systems" class="section-panel">
-            <h2 class="mb-4">ระบบ & การเชื่อมต่อ</h2>
-            <div class="card bg-dark border-secondary mb-4" style="background: rgba(255, 255, 255, 0.03) !important;">
-            <div class="card-header border-secondary bg-transparent py-3">
-                <h5 class="mb-0 text-white"><i class="fa-brands fa-discord me-2 text-primary"></i> ตั้งค่าการแจ้งเตือน Discord</h5>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-6 mb-4">
-                        <label class="form-label text-white-50 small d-flex align-items-center">
-                            <i class="fa-solid fa-gears me-2"></i> Webhook แจ้งเตือนระบบ & แอดมิน
-                        </label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-dark border-secondary text-white-50"><i class="fa-solid fa-link"></i></span>
-                            <input type="text" id="conf-discord-webhook" class="form-control bg-dark text-white border-secondary shadow-none" 
-                                placeholder="https://discord.com/api/webhooks/...">
+                <div class="row text-center">
+                    <div class="col-md-4">
+                        <div class="p-4 rounded-4" style="background: rgba(0,0,0,0.2);">
+                            <label class="input-label d-block mb-3">สีหลักของเว็บ</label>
+                            <input type="color" id="conf-color" class="form-control-color w-100 border-0 bg-transparent" style="height: 80px;">
                         </div>
                     </div>
-
-                    <div class="col-md-6 mb-4">
-                        <label class="form-label text-white-50 small d-flex align-items-center">
-                            <i class="fa-solid fa-users me-2"></i> Webhook แจ้งเตือนสมาชิกใหม่ & เข้าสู่ระบบ
-                        </label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-dark border-secondary text-white-50"><i class="fa-solid fa-shield-halved"></i></span>
-                            <input type="text" id="conf-user-webhook" class="form-control bg-dark text-white border-secondary shadow-none" 
-                                placeholder="https://discord.com/api/webhooks/...">
+                    <div class="col-md-4">
+                        <div class="p-4 rounded-4" style="background: rgba(0,0,0,0.2);">
+                            <label class="input-label d-block mb-3">สีพื้นหลังของเว็บ</label>
+                            <input type="color" id="conf-bg-color" class="form-control-color w-100 border-0 bg-transparent" style="height: 80px;">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-4 rounded-4" style="background: rgba(0,0,0,0.2);">
+                            <label class="input-label d-block mb-3">สีข้อความของเว็บ</label>
+                            <input type="color" id="conf-text-color" class="form-control-color w-100 border-0 bg-transparent" style="height: 80px;">
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        </div>
 
-        <div id="users-manage" class="section-panel" style="display: none;">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2 class="m-0"><i class="fa-solid fa-users-gear me-2"></i> จัดการสมาชิก</h2>
-                <div class="search-box" style="width: 300px;">
+        <div id="users-manage" class="section-panel">
+            <div class="d-flex justify-content-between align-items-end page-header">
+                <div>
+                    <h2>จัดการสมาชิก</h2>
+                    <p class="text-white-50">ดูและแก้ไขสิทธิ์ผู้ใช้งานในระบบ</p>
+                </div>
+                <div style="width: 350px;">
                     <div class="input-group">
-                        <span class="input-group-text bg-dark border-secondary text-white-50"><i class="fa-solid fa-magnifying-glass"></i></span>
-                        <input type="text" id="user-search-input" class="form-control bg-dark border-secondary text-white" placeholder="ค้นหาชื่อผู้ใช้หรืออีเมล...">
+                        <span class="input-group-text bg-transparent border-secondary border-end-0 text-white-50">
+                            <i class="fa-solid fa-search"></i>
+                        </span>
+                        <input type="text" id="user-search-input" class="form-control bg-transparent border-secondary border-start-0 text-white shadow-none" placeholder="ค้นหารายชื่อ...">
                     </div>
                 </div>
             </div>
-
-            <div class="admin-card">
+            <div class="admin-card p-0 overflow-hidden">
                 <div class="table-responsive">
-                    <table class="table table-dark table-hover border-secondary m-0">
+                    <table class="table m-0">
                         <thead>
                             <tr>
-                                <th class="py-3">ชื่อผู้ใช้ (Username)</th>
-                                <th class="py-3">อีเมล</th>
-                                <th class="py-3">สถานะ (Role)</th>
-                                <th class="py-3 text-end">จัดการ</th>
+                                <th class="ps-4">USERNAME</th>
+                                <th>EMAIL</th>
+                                <th>ROLE</th>
+                                <th class="text-end pe-4">ACTIONS</th>
                             </tr>
                         </thead>
                         <tbody id="user-list-table">
-                            <tr><td colspan="4" class="text-center py-5">กำลังโหลดข้อมูล...</td></tr>
+                            <tr><td colspan="4" class="text-center py-5">
+                                <div class="spinner-border text-primary" role="status"></div>
+                            </td></tr>
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
 
-        <div id="payment-manage" class="section-panel active">
-            <h2 class="mb-4"><i class="fa-solid fa-history me-2 text-primary"></i> ประวัติการเติมเงินล่าสุด</h2>
-            <div class="admin-card">
+        <div id="payment-manage" class="section-panel">
+            <div class="page-header">
+                <h2>ประวัติการทำรายการ</h2>
+                <p class="text-white-50">ตรวจสอบการเติมเงินและความเคลื่อนไหวของรายได้</p>
+            </div>
+            <div class="admin-card p-0 overflow-hidden">
                 <div class="table-responsive">
-                    <table class="table table-dark table-hover m-0">
+                    <table class="table m-0">
                         <thead>
                             <tr>
-                                <th class="py-3">วัน-เวลา</th>
-                                <th class="py-3">อีเมลลูกค้า</th>
-                                <th class="py-3">จำนวนเงิน</th>
-                                <th class="py-3">ช่องทาง/Ref</th>
-                                <th class="py-3">สถานะ</th>
-                                <th class="py-3 text-end">จัดการ</th>
+                                <th class="ps-4">TIME</th>
+                                <th>CUSTOMER</th>
+                                <th>AMOUNT</th>
+                                <th>METHOD/REF</th>
+                                <th>STATUS</th>
+                                <th class="text-end pe-4">MANAGE</th>
                             </tr>
                         </thead>
                         <tbody id="all-payment-table">
-                            <tr><td colspan="6" class="text-center py-5">กำลังโหลดประวัติการเติมเงิน...</td></tr>
-                        </tbody>
+                            </tbody>
                     </table>
                 </div>
             </div>
         </div>
-
-        <div style="position: fixed; bottom: 30px; right: 30px; display: flex; gap: 10px;">
-            <button class="btn btn-outline-danger btn-lg fw-bold shadow-lg" id="reset-config" style="border-radius: 50px; padding: 15px 30px; background: rgba(220, 53, 69, 0.1);">
-                <i class="fa-solid fa-rotate-left me-2"></i> รีเซ็ตค่าเริ่มต้น
-            </button>
-
-            <button class="btn btn-outline-warning btn-lg fw-bold shadow-lg" id="reset-theme-only" style="border-radius: 50px; padding: 15px 30px; background: rgba(255, 193, 7, 0.1);">
-                <i class="fa-solid fa-palette me-2"></i> รีเซ็ตสี & ธีม
-            </button>
-            
-            <button class="btn btn-primary btn-lg fw-bold shadow-lg" id="save-all-config" style="border-radius: 50px; padding: 15px 40px;">
-                <i class="fa-solid fa-floppy-disk me-2"></i> บันทึกทั้งหมด
-            </button>
+        
+        <div id="systems" class="section-panel">
+            <div class="page-header">
+                <h2>เชื่อมต่อภายนอก</h2>
+                <p class="text-white-50">ตั้งค่า Webhook เพื่อแจ้งเตือนเข้า Discord</p>
+            </div>
+            <div class="admin-card">
+                 <div class="mb-4">
+                    <label class="input-label"><i class="fa-brands fa-discord me-2"></i> System Webhook (แจ้งเตือนการบันทึกของระบบแอดมิน)</label>
+                    <input type="text" id="conf-discord-webhook" class="input-admin" placeholder="https://discord.com/api/webhooks/...">
+                 </div>
+                 <div>
+                    <label class="input-label"><i class="fa-solid fa-user-plus me-2"></i> User Registration Webhook (แจ้งเตือนการ เข้าสู่ระบบ - สมัครสมาชิก)</label>
+                    <input type="text" id="conf-user-webhook" class="input-admin" placeholder="https://discord.com/api/webhooks/...">
+                 </div>
+            </div>
         </div>
+    </div>
+
+    <div class="action-bar">
+        <button class="btn btn-modern btn-outline-danger" id="reset-config">
+            <i class="fa-solid fa-rotate-left"></i> รีเซ็ตทั้งหมด
+        </button>
+        <button class="btn btn-modern btn-outline-warning" id="reset-theme-only">
+            <i class="fa-solid fa-palette"></i> คืนค่าสี
+        </button>
+        <button class="btn btn-modern btn-save" id="save-all-config">
+            <i class="fa-solid fa-check-double"></i> บันทึกข้อมูล
+        </button>
+    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -833,6 +1021,10 @@ window.approvePayment = async (payId, uid, amount, email) => {
 
 // เรียกใช้งาน
 loadAllPayments();
+
+window.onload = () => {
+    showSection('general'); 
+};
 
     </script>
 </body>
