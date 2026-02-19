@@ -438,10 +438,14 @@ onAuthStateChanged(auth, (user) => {
                         </li>
                         <li><hr class="dropdown-divider"></li>
                         
-                        ${adminMenuItem} <li><a class="dropdown-item" href="topup.html">เติมเงิน</a></li>
-                        <li><a class="dropdown-item" href="history.html">ประวัติการซื้อ</a></li>
+                        ${adminMenuItem} 
+                        <li><a class="dropdown-item" href="topup.html"><i class="fa-solid fa-wallet me-2"></i> เติมเงิน</a></li>
+                        <li><a class="dropdown-item" href="history.html"><i class="fa-solid fa-history me-2"></i> ประวัติการซื้อ</a></li>
+                        
+                        <li><a class="dropdown-item text-info" href="chat.html"><i class="fa-solid fa-comment-dots me-2"></i> ติดต่อแอดมิน</a></li>
+                        
                         <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item text-danger" href="#" id="logout-btn">ออกจากระบบ</a></li>
+                        <li><a class="dropdown-item text-danger" href="#" id="logout-btn"><i class="fa-solid fa-right-from-bracket me-2"></i> ออกจากระบบ</a></li>
                     </ul>
                 </div>
             `;
