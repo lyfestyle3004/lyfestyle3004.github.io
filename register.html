@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>...</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        :root {
+            --primary: #00d2ff;
+            --secondary: #3a7bd5;
+            --dark: #06070a; /* สีพื้นหลัง */
+            --text-main: #ffffff; /* สีฟอนต์ */
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            background-color: var(--dark);
+            color: var(--text-main);
+            font-family: 'Kanit', sans-serif;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(0, 210, 255, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(58, 123, 213, 0.05) 0%, transparent 40%);
+        }
+
+        /* --- SNOWFALL EFFECT --- */
+        .snow-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+        .snowflake { position: absolute; top: -10px; background: white; border-radius: 50%; filter: blur(1px); opacity: 0.2; animation: fall linear infinite; }
+        @keyframes fall {
+            0% { transform: translateY(0) translateX(0); opacity: 0; }
+            10% { opacity: 0.2; }
+            100% { transform: translateY(105vh) translateX(50px); opacity: 0; }
+        }
+        /* กำหนดค่าหิมะให้เหมือนเดิม */
+        .snowflake:nth-child(1) { width: 4px; height: 4px; left: 10%; animation-duration: 10s; }
+        .snowflake:nth-child(2) { width: 5px; height: 5px; left: 30%; animation-duration: 15s; animation-delay: 2s; }
+        .snowflake:nth-child(3) { width: 3px; height: 3px; left: 50%; animation-duration: 12s; animation-delay: 4s; }
+        .snowflake:nth-child(4) { width: 4px; height: 4px; left: 70%; animation-duration: 18s; animation-delay: 1s; }
+        .snowflake:nth-child(5) { width: 3px; height: 3px; left: 90%; animation-duration: 14s; animation-delay: 5s; }
+
+        /* --- NAVBAR CENTERED --- */
+        .navbar-modern { background: rgba(6, 7, 10, 0.7); backdrop-filter: blur(20px); border-bottom: 1px solid var(--glass-border); z-index: 1000; }
+        .nav-auth-btn {
+            display: flex; align-items: center; gap: 10px; padding: 10px 24px; margin: 0 8px;
+            border-radius: 14px; font-weight: 600; font-size: 13.5px; text-decoration: none !important;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1); height: 44px; position: relative; overflow: hidden;
+        }
+        .nav-auth-shine { position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent); transition: left 0.5s ease; }
+        .nav-auth-btn:hover .nav-auth-shine { left: 100%; }
+        .nav-auth-login { background: rgba(255, 255, 255, 0.04); color: rgba(255, 255, 255, 0.85) !important; backdrop-filter: blur(8px); }
+        .nav-auth-register { background: linear-gradient(135deg, var(--primary), var(--primary), #8beaff); 
+            border: 1px solid var(--glass-border) !important; }
+
+        /* --- FLOATING ELEMENTS (RIGHT) --- */
+        .float-element { position: absolute; background: var(--glass); backdrop-filter: blur(10px); border: 1px solid var(--glass-border); border-radius: 20px; padding: 18px; display: flex; align-items: center; gap: 15px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); z-index: 5; }
+        @keyframes float-complex { 0%, 100% { transform: translateY(0px) rotate(0deg); } 50% { transform: translateY(-20px) rotate(2deg); } }
+        .card-1 { top: 15%; right: 5%; width: 220px; animation: float-complex 8s infinite ease-in-out; }
+        .card-2 { bottom: 20%; right: 5%; width: 240px; animation: float-complex 10s infinite ease-in-out -2s; }
+        .icon-box { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #fff; }
+        .bg-blue { background: linear-gradient(135deg, #00d2ff, #3a7bd5); }
+        .bg-purple { background: linear-gradient(135deg, #00d2ff, #3a7bd5); }
+
+        /* --- REGISTER SECTION --- */
+        .main-container { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; z-index: 10; }
+        .register-card {
+            width: 100%; max-width: 480px; background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 28px; padding: 40px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.4); animation: registerAppear 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        @keyframes registerAppear { from { opacity: 0; transform: scale(0.95) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        
+        .register-avatar { font-size: 50px; color: var(--primary); filter: drop-shadow(0 0 15px rgba(168, 85, 247, 0.4)); margin-bottom: 15px; }
+        
+        .input-group-custom { position: relative; margin-bottom: 18px; }
+        .input-group-custom i { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: rgba(255,255,255,0.3); transition: 0.3s; }
+        .input-group-custom input { 
+            width: 100%; padding: 12px 15px 12px 50px; background: rgba(255,255,255,0.04); 
+            border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; color: #fff; outline: none; transition: 0.3s; 
+            font-size: 14px;
+        }
+        .input-group-custom input:focus { border-color: var(--primary);; box-shadow: 0 0 15px rgba(168, 85, 247, 0.1); }
+        .input-group-custom input:focus + i { color: #00d2ff; }
+
+        .btn-register { 
+            width: 100%; border: none; height: 50px; border-radius: 12px; font-weight: 600; 
+            background: linear-gradient(135deg, var(--primary), var(--primary)); color: #fff; 
+            position: relative; overflow: hidden; transition: 0.3s; margin-top: 10px;
+        }
+        .btn-register:hover { transform: translateY(-3px); box-shadow: 0 10px 20px var(--purple-glow); }
+
+        /* --- FOOTER --- */
+        .footer-premium { padding: 30px 0; text-align: center; z-index: 100; }
+        .footer-line { width: 100%; max-width: 400px; height: 1px; background: linear-gradient(90deg, transparent, var(--primary), var(--secondary), transparent); margin: 0 auto 15px; opacity: 0.4; }
+        .footer-brand { color: var(--primary); font-weight: 600; text-shadow: 0 0 10px rgba(0, 210, 255, 0.2); }
+
+        /* --- MODAL GLASSMOPHISM --- */
+        .terms-modal-glass {
+            background: rgba(15, 16, 20, 0.85) !important;
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-radius: 24px !important;
+            color: #fff;
+            box-shadow: 0 0 40px rgba(0, 210, 255, 0.15);
+        }
+
+        .modal-backdrop.show {
+            opacity: 0.7;
+            backdrop-filter: blur(5px);
+        }
+
+        .terms-modal-glass .modal-body::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .terms-modal-glass .modal-body::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+        }
+
+        /* ป้องกันหน้าเว็บขยับเวลา Alert เด้ง */
+        body.swal2-shown {
+            padding-right: 0 !important;
+        }
+        html.swal2-shown {
+            overflow: auto !important;
+        }
+
+        /* แต่งขอบ Swal ให้มีความเป็น Glassmorphism */
+        .swal2-popup.border-glass-alert {
+            border: 1px solid rgba(0, 210, 255, 0.2) !important;
+            box-shadow: 0 0 20px rgba(0, 210, 255, 0.1) !important;
+            border-radius: 15px !important;
+        }
+
+        /* ป้องกันหน้าจอกระตุกตอน Alert เด้ง */
+        body.swal2-shown {
+            padding-right: 0 !important;
+        }
+        html.swal2-height-auto {
+            height: 100% !important;
+        }
+
+        /* ขอบหน้าต่าง Error แบบ Neon Red */
+    /* --- SWEETALERT CUSTOM --- */
+    .swal2-popup {
+        border-radius: 20px !important;
+        border: 1px solid var(--glass-border) !important;
+        background: #06070a !important;
+        color: #fff !important;
+    }
+    .swal2-popup.border-glass-alert {
+        border: 1px solid var(--primary) !important;
+        box-shadow: 0 0 20px var(--purple-glow) !important;
+        border-radius: 20px !important;
+    }
+    /* เปลี่ยนสีเส้นวงกลมและเครื่องหมายถูกของไอคอน success ให้เป็นสีหลัก */
+    .swal2-icon.swal2-success {
+        border-color: var(--primary) !important;
+        color: var(--primary) !important;
+    }
+
+    .swal2-icon.swal2-success [class^='swal2-success-line'] {
+        background-color: var(--primary) !important;
+    }
+
+    .swal2-icon.swal2-success .swal2-success-ring {
+        border: .25em solid var(--primary); /* ความเข้มของเส้นวงกลม */
+        opacity: 0.3; /* ทำให้วงกลมจางลงหน่อยเพื่อให้เครื่องหมายถูกเด่น */
+    }
+
+    /* ถ้ามีปุ่ม ยืนยัน ก็ให้เปลี่ยนสีตามธีมด้วย */
+    .swal2-confirm {
+        background: var(--primary) !important;
+        background: linear-gradient(135deg, var(--primary), var(--secondary)) !important;
+        box-shadow: 0 0 10px var(--purple-glow) !important;
+        border-radius: 10px !important;
+    }
+    
+    </style>
+</head>
+<body>
+        <div id="loading-screen" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #06070a; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; transition: opacity 0.5s ease;">
+    <div class="spinner-border" style="width: 3rem; height: 3rem; color: #fff;" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+    <p style="margin-top: 15px; color: #fff; font-family: 'Kanit', sans-serif; letter-spacing: 1px; opacity: 0.8;">Loading...</p>
+    </div>
+
+    <div class="snow-container">
+        <div class="snowflake"></div><div class="snowflake"></div><div class="snowflake"></div>
+        <div class="snowflake"></div><div class="snowflake"></div>
+    </div>
+
+<script type="module">
+    // 1. Import Firebase Modules (รวมกลุ่มเดียว ไม่ให้ซ้ำซ้อน)
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { 
+        getAuth, 
+        onAuthStateChanged, 
+        signOut, 
+        signInWithEmailAndPassword,
+        createUserWithEmailAndPassword 
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { 
+        getDatabase, 
+        ref, 
+        set, 
+        get, 
+        onValue 
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+    // 2. Firebase Config
+    const firebaseConfig = {
+        apiKey: "AIzaSyAu_tpFJkolV90YBMFwzSUIu8KnusAB8mg",
+        authDomain: "verify-hiz.firebaseapp.com",
+        databaseURL: "https://verify-hiz-default-rtdb.firebaseio.com",
+        projectId: "verify-hiz",
+        storageBucket: "verify-hiz.firebasestorage.app",
+        messagingSenderId: "1001871666471",
+        appId: "1:1001871666471:web:daea600bd157f907634d02",
+        measurementId: "G-2F4W88C6HL"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getDatabase(app);
+    const authArea = document.getElementById('auth-area');
+
+    const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim();
+    const darkColor = getComputedStyle(document.documentElement).getPropertyValue('--dark').trim();
+
+
+    // --- ฟังก์ชันส่วนกลางสำหรับส่ง Log ไป Discord ---
+    const sendUserLog = async (eventTitle, userEmail, userUid, color) => {
+        try {
+            const snapshot = await get(ref(db, 'config/userWebhook'));
+            const webhookUrl = snapshot.val();
+            if (!webhookUrl || !webhookUrl.includes('/api/webhooks/')) return;
+
+            const device = navigator.platform;
+            const browser = navigator.userAgent.split(' ').pop();
+
+            await fetch(webhookUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    embeds: [{
+                        title: eventTitle,
+                        color: color,
+                        fields: [
+                            { name: "👤 User/Email", value: userEmail, inline: true },
+                            { name: "🆔 UID", value: `\`${userUid}\``, inline: true },
+                            { name: "💻 Device", value: device, inline: true },
+                            { name: "🌐 Browser", value: browser, inline: true },
+                            { name: "⏰ Time", value: new Date().toLocaleString('th-TH'), inline: false }
+                        ],
+                        footer: { text: "Security System" },
+                        timestamp: new Date().toISOString()
+                    }]
+                })
+            });
+        } catch (err) { console.error("Log Error:", err); }
+    };
+
+    // 2. ดึงค่าสีจากพาธ config ที่แอดมินบันทึกไว้
+    const configRef = ref(db, 'config');
+    onValue(configRef, (snapshot) => {
+        const config = snapshot.val();
+        if (config) {
+
+            if (config.themeColor) {
+                const pColor = config.themeColor;
+                const sColor = config.secondaryColor || pColor; 
+                document.documentElement.style.setProperty('--primary', pColor);
+                document.documentElement.style.setProperty('--secondary', sColor);
+                document.documentElement.style.setProperty('--purple-glow', pColor + '4d');
+                // พื้นหลังสีเดียว (Solid) ตามที่คุณต้องการ
+                document.body.style.backgroundImage = `
+                    radial-gradient(circle at 20% 30%, ${pColor}0d 0%, transparent 40%),
+                    radial-gradient(circle at 80% 70%, ${sColor}0d 0%, transparent 40%)
+                `;
+            }
+
+            // --- ส่วนที่เพิ่มใหม่: ปิดหน้าโหลด ---
+            const loadingScreen = document.getElementById('loading-screen');
+            if (loadingScreen) {
+                loadingScreen.style.opacity = '0'; // ค่อยๆ จางออก
+                setTimeout(() => {
+                    loadingScreen.style.display = 'none'; // นำออกจากหน้าจอ
+                }, 500); // ระยะเวลาต้องเท่ากับ transition ใน style
+            }
+            // ดึงค่า themeColor (สีหลัก) และ secondaryColor (สีรอง)
+            const pColor = config.themeColor || '#00d2ff';
+            const sColor = config.secondaryColor || '#3a7bd5';
+
+            // สั่งเปลี่ยนค่า CSS Variables ในหน้าเว็บทันที
+            document.documentElement.style.setProperty('--primary', pColor);
+            document.documentElement.style.setProperty('--secondary', sColor);
+            
+            // สร้างแสง Glow ให้เปลี่ยนตามสีหลัก (ใส่ความโปร่งใส 30% หรือ '4d')
+            document.documentElement.style.setProperty('--purple-glow', pColor + '4d');
+
+            // เปลี่ยนสี Background Gradient ด้านหลังให้แมตช์กัน
+            document.body.style.backgroundImage = `
+                radial-gradient(circle at 20% 30%, ${pColor}0d 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, ${sColor}0d 0%, transparent 40%)
+            `;
+        }
+});
+
+    onValue(ref(db, 'config'), (snapshot) => {
+        const config = snapshot.val();
+        if (config) {
+            // แก้ไขชื่อเว็บไซต์ในจุดต่างๆ
+            if (config.siteName) {
+                document.title = config.siteName;
+                const siteNameElements = [
+                    document.getElementById('site-name-display'), // ใน Hero
+                    document.getElementById('site-name-nav')      // ใน Navbar (ถ้ามี)
+                ];
+                siteNameElements.forEach(el => { if(el) el.innerText = config.siteName; });
+            }
+            
+            // แก้ไขสีธีมหลัก (ส่งผลต่อ Glow และปุ่ม)
+            if (config.themeColor) {
+                document.documentElement.style.setProperty('--primary', config.themeColor);
+            }
+
+            const primaryColor = config.themeColor || '#00d2ff';
+            const bgColor = config.bgColor || '#06070a';
+
+            // 1. อัปเดตสีหลัก (Theme Color)
+            document.documentElement.style.setProperty('--primary', primaryColor);
+
+            // 2. อัปเดต Background Image (Radial Gradient) แบบไดนามิก
+            // เราจะใช้สี Theme ที่เลือก มาทำเป็นแสงจางๆ (Alpha 0.05 - 0.1)
+            document.body.style.backgroundImage = `
+                radial-gradient(circle at 20% 30%, ${primaryColor}1a 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, ${primaryColor}0d 0%, transparent 40%)
+            `;
+            document.body.style.backgroundColor = bgColor;
+
+            // 3. จัดการสีปุ่มตอน Hover และปุ่ม Register
+            // สร้าง Style Tag พิเศษเพื่อคุม Hover Shadow และ Gradient ปุ่ม Register
+            let dynamicStyle = document.getElementById('dynamic-theme-style');
+            if (!dynamicStyle) {
+                dynamicStyle = document.createElement('style');
+                dynamicStyle.id = 'dynamic-theme-style';
+                document.head.appendChild(dynamicStyle);
+            }
+            dynamicStyle.innerHTML = `
+                .btn-glow:hover, .btn-hero-primary:hover {
+                    box-shadow: 0 8px 30px ${primaryColor}66 !important;
+                }
+                .nav-auth-register {
+                    background: linear-gradient(135deg, ${primaryColor}, ${primaryColor}cc, ${primaryColor}99) !important;
+                    border: 1px solid ${primaryColor}66 !important;
+                    box-shadow: 0 4px 15px ${primaryColor}33 !important;
+                }
+                .nav-auth-register:hover {
+                    box-shadow: 0 8px 25px ${primaryColor}66 !important;
+                }
+                .nav-auth-login:hover {
+                    background: ${primaryColor}1f !important; /* สีจางๆ 12% */
+                }
+            `;
+
+            // เปลี่ยนสีฟอนต์ (Text Color)
+            if (config.textColor) {
+                document.body.style.color = config.textColor;
+                // บังคับเปลี่ยนสีข้อความในจุดที่ไม่ได้ใช้ตัวแปร
+                document.querySelectorAll('h1, p, .stat-n').forEach(el => {
+                    el.style.color = config.textColor;
+                });
+            }
+        }
+             // --- ส่วนจัดการสี (จากคำขอก่อนหน้า) ---
+            const primaryColor = config.themeColor || '#00d2ff';
+
+            });
+
+    // --- 3. ฟังก์ชัน LOGIN ---
+    const loginForm = document.getElementById('login-form');
+    if (loginForm) {
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('login-username').value;
+            const password = document.getElementById('login-password').value;
+            const fakeEmail = `${username}@testshop.com`;
+
+            try {
+                const userCredential = await signInWithEmailAndPassword(auth, fakeEmail, password);
+                await sendUserLog("🔑 เข้าสู่ระบบ", username, userCredential.user.uid, 3447003);
+
+                Swal.fire({
+                icon: 'success',
+                title: 'เข้าสู่ระบบสำเร็จ',
+                text: `ยินดีต้อนรับคุณ ${username}`,
+                iconColor: themePrimary, // <--- บรรทัดนี้จะทำให้ไอคอนเครื่องหมายถูกเปลี่ยนสีตามแอดมิน
+                background: '#06070a',
+                color: '#fff',
+                showConfirmButton: false,
+                timer: 2000,
+                heightAuto: false,
+                customClass: {
+                    popup: 'border-glass-alert' // คลาสที่เราแต่งขอบเรืองแสงไว้
+                }
+            }).then(() => { 
+                window.location.href = "shop.html"; 
+            });
+            } catch (error) { 
+                Swal.fire({ icon: 'error', title: 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง', background: '#06070a', color: '#fff', heightAuto: false });
+            }
+        });
+    }
+
+    // --- 4. ฟังก์ชัน REGISTER ---
+    const registerForm = document.getElementById('register-form');
+    if (registerForm) {
+        registerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            // ดึง ID ให้ตรงกับ HTML ของคุณ
+            const username = document.getElementById('reg-username').value;
+            const password = document.getElementById('reg-password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+
+            if (password !== confirmPassword) {
+                Swal.fire({ icon: 'warning', title: 'รหัสผ่านไม่ตรงกัน', heightAuto: false });
+                return;
+            }
+
+            const fakeEmail = `${username}@testshop.com`;
+
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, fakeEmail, password);
+                const user = userCredential.user;
+
+                await set(ref(db, 'users/' + user.uid), {
+                    username: username,
+                    credits: 0,
+                    role: 'user',
+                    createdAt: new Date().toISOString()
+                });
+
+                await sendUserLog("🆕 สมัครสมาชิกใหม่", username, user.uid, 3066993);
+
+                Swal.fire({
+                icon: 'success',
+                title: '<span style="font-family: \'Kanit\', sans-serif; font-weight: 600;">สมัครสมาชิกสำเร็จ!</span>',
+                text: `ยินดีต้อนรับคุณ ${username} `,
+                background: '#06070a',
+                color: '#fff',
+                iconColor: '#00d2ff',
+                showConfirmButton: false,
+                timer: 2000,
+                timerProgressBar: true,
+                heightAuto: false
+            }).then(() => { 
+                window.location.href = "shop.html"; 
+            });
+            } catch (error) {
+            let msg = "เกิดข้อผิดพลาดในการเชื่อมต่อ";
+            
+            // ตรวจสอบ Error Code จาก Firebase
+            if (error.code === 'auth/email-already-in-use') {
+                msg = "ชื่อผู้ใช้งานนี้ถูกใช้ไปแล้ว โปรดลองใช้ชื่ออื่น";
+            } else if (error.code === 'auth/weak-password') {
+                msg = "รหัสผ่านต้องมีความยาวอย่างน้อย 6 ตัวอักษร";
+            }
+
+            Swal.fire({
+                icon: 'error',
+            title: '<span style="font-family: \'Kanit\', sans-serif; font-weight: 600;">สมัครสมาชิกไม่สำเร็จ</span>',
+            text: msg,
+            background: 'var(--dark)',
+            color: '#fff',
+            iconColor: '#ff4b2b',
+            confirmButtonColor: 'var(--primary)',
+            confirmButtonText: 'ลองอีกครั้ง',
+            heightAuto: false,
+            customClass: {
+                popup: 'border-glass-error'
+            }
+        });
+        }
+        });
+    }
+
+    // --- 5. จัดการ Navbar & สถานะล็อคอิน ---
+   onAuthStateChanged(auth, (user) => {
+    if (user) {
+        const userRef = ref(db, 'users/' + user.uid);
+        onValue(userRef, (snapshot) => {
+            const data = snapshot.val();
+            const credits = (data && data.credits) ? data.credits : 0;
+            const displayName = user.email.split('@')[0];
+            
+            // --- ส่วนที่เพิ่ม: ตรวจสอบว่าเป็น Admin หรือไม่ ---
+            const isAdmin = data && data.role === 'admin';
+            const adminMenuItem = isAdmin 
+                ? `<li><a class="dropdown-item text-info" href="admin.html"><i class="fa-solid fa-user-shield me-2"></i>จัดการระบบ</a></li>
+                   <li><hr class="dropdown-divider"></li>` 
+                : '';
+            // ------------------------------------------
+
+            authArea.innerHTML = `
+                <div class="dropdown">
+                    <button class="nav-auth-btn nav-auth-login dropdown-toggle border-0" 
+                            type="button" 
+                            id="userMenu" 
+                            data-bs-toggle="dropdown" 
+                            aria-expanded="false"
+                            style="cursor: pointer; z-index: 9999;">
+                        <i class="fa-solid fa-circle-user me-2"></i> ${displayName}
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end shadow-lg mt-2">
+                        <li class="px-3 py-2">
+                            <div class="small text-white-50">ยอดเงินของคุณ</div>
+                            <div class="fw-bold text-primary">฿ ${credits.toLocaleString()}</div>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        
+                        ${adminMenuItem} <li><a class="dropdown-item" href="topup.html">เติมเงิน</a></li>
+                        <li><a class="dropdown-item" href="history.html">ประวัติการซื้อ</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="#" id="logout-btn">ออกจากระบบ</a></li>
+                    </ul>
+                </div>
+            `;
+
+            document.getElementById('logout-btn').addEventListener('click', () => {
+                signOut(auth).then(() => { window.location.href = "login.html"; });
+            });
+        }, (error) => {
+            console.error(error);
+            authArea.innerHTML = `<span class="text-white-50 small">${user.email.split('@')[0]} (Error DB)</span>`;
+        });
+    } else {
+        authArea.innerHTML = `
+            <a href="login.html" class="nav-auth-btn nav-auth-login">เข้าสู่ระบบ</a>
+            <a href="register.html" class="nav-auth-btn nav-auth-register">สมัครสมาชิก</a>
+        `;
+    }
+});
+</script>
+
+    <div class="main-container container">
+        
+        <div class="register-card text-center">
+            <i class="fa-solid fa-user-plus register-avatar"></i>
+            <h2 class="fw-bold mb-2">SIGN UP</h2>
+            <p class="text-white-50 small mb-4">เข้าร่วมเป็นสมาชิกกับเรา</p>
+            
+            <form id="register-form">
+        <div class="input-group-custom">
+            <i class="fa-solid fa-user"></i>
+            <input type="text" id="reg-username" placeholder="ชื่อผู้ใช้งาน (Username)" required>
+        </div>
+
+        <div class="input-group-custom">
+            <i class="fa-solid fa-lock"></i>
+            <input type="password" id="reg-password" placeholder="รหัสผ่าน (Password)" required>
+        </div>
+        
+        <div class="input-group-custom">
+            <i class="fa-solid fa-lock"></i>
+            <input type="password" id="confirm-password" placeholder="ยืนยันรหัสผ่าน (Confirm Password)" required>
+        </div>
+
+        <div class="text-start mb-3 px-1">
+            <label class="small text-white-50" style="cursor: pointer;">
+                <input type="checkbox" class="me-1" required> 
+                ฉันยอมรับ <a href="#" class="text-info text-decoration-none" data-bs-toggle="modal" data-bs-target="#termsModal">เงื่อนไขการใช้บริการ</a>
+            </label>
+        </div>
+
+        <button type="submit" class="btn-register">
+            <div class="nav-auth-shine"></div>
+            สร้างบัญชีผู้ใช้
+        </button>
+    </form>
+
+            <div class="mt-4 small text-white-50">
+                มีบัญชีอยู่แล้ว? <a href="login.html" class="text-primary text-decoration-none fw-bold">เข้าสู่ระบบ</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="termsModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content terms-modal-glass">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title fw-bold"><i class="fa-solid fa-file-shield me-2 text-primary"></i>เงื่อนไขการใช้บริการ</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body small opacity-75">
+                    <h6 class="text-primary fw-bold">1. การยอมรับข้อกำหนด</h6>
+                    <p>การสมัครสมาชิกถือว่าท่านได้อ่านและยอมรับเงื่อนไขการใช้บริการของเรา ทุกประการ</p>
+                    
+                    <h6 class="text-primary fw-bold">2. ความปลอดภัยของบัญชี</h6>
+                    <p>ผู้ใช้ต้องเก็บรักษารหัสผ่านไว้เป็นความลับ ห้ามส่งต่อบัญชีให้ผู้อื่นใช้งาน หากเกิดความเสียหายทางเราจะไม่รับผิดชอบ</p>
+                    
+                    <h6 class="text-primary fw-bold">3. นโยบายการคืนเงิน</h6>
+                    <p>สินค้า เมื่อซื้อแล้วไม่สามารถเปลี่ยนหรือคืนเงินได้ เว้นแต่เกิดข้อผิดพลาดจากระบบของทางร้านเอง</p>
+                    
+                    <h6 class="text-primary fw-bold">4. ข้อห้าม</h6>
+                    <p>ห้ามพยายามเจาะระบบ หรือกระทำการใดๆ ที่ส่งผลเสียต่อเว็บ หากตรวจพบจะระงับสิทธิ์การใช้งานทันที</p>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="nav-auth-btn nav-auth-register border-0 h-auto py-2 px-4" data-bs-dismiss="modal">รับทราบ</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
