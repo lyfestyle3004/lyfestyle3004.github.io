@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GANG LINEUP</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@200;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-image: url('https://media.discordapp.net/attachments/1460945457864769679/1462401979723808839/file_00000000b96071fa936bc0f3b3334590.png?ex=69a56e7a&is=69a41cfa&hm=005aaa46f6c3d95e2bb5cd339376d55598dc1578297fe8781858c5d00b3e93c9&=&format=webp&quality=lossless&width=525&height=350');
+        }
+        body {
+            font-family: 'Kanit', sans-serif;
+            background: #000;
+            color: #fff;
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden; /* ป้องกัน scroll เกินจำเป็น */
+        }
+
+        /* พื้นหลัง Layer 1: รูปภาพเบลอ */
+        .bg-overlay {
+            position: fixed; inset: 0;
+            background-image: var(--bg-image);
+            background-size: cover; background-position: center;
+            filter: brightness(0.15) blur(12px);
+            z-index: -2; transform: scale(1.1);
+        }
+
+        /* พื้นหลัง Layer 2: Gradient เคลื่อนไหว */
+        .bg-gradient-animate {
+            position: fixed; inset: 0;
+            z-index: -1;
+            background: linear-gradient(-45deg, #000000, #ffffff18, #ffffff27, #000000);
+            background-size: 400% 400%;
+            animation: gradientFlow 15s ease infinite;
+            opacity: 0.6; /* ปรับความเข้มของสี Gradient */
+        }
+
+        @keyframes gradientFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @media (max-width: 1200px) {
+            .admin-sidebar {
+                position: relative; right: auto; top: auto;
+                transform: none; width: 100%; max-width: 400px;
+                margin: 40px auto; padding-bottom: 100px;
+            }
+        }
+        /* Pitch Line - เส้นแบ่งโซนสนาม */
+        .pitch-zone {
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 40px 0;
+            position: relative;
+        }
+        .pitch-zone::after {
+            content: attr(data-label);
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.6rem;
+            letter-spacing: 0.5em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.1);
+            pointer-events: none;
+        }
+        /* การ์ดสมาชิกแบบเดิม */
+        .member-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .member-card:hover {
+            background: #fff;
+            color: #000;
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(255,255,255,0.2);
+        }
+        /* Notifications & Modals */
+        #notification-container { position: fixed; top: 20px; right: 20px; z-index: 9999; }
+        .toast { background: #fff; color: #000; padding: 12px 24px; border-radius: 2px; font-weight: 600; font-size: 0.8rem; animation: slideIn 0.3s ease forwards; }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.9); backdrop-filter: blur(10px); display: none; align-items: center; justify-content: center; z-index: 10000; }
+        /* แถบข้างสำหรับเพิ่มรายชื่อ */
+        .admin-sidebar {
+            position: fixed;
+            right: 20px; /* อยู่ทางขวา */
+            top: 50%;
+            transform: translateY(-50%);
+            width: 280px;
+            z-index: 100;
+        }
+
+        /* ปรับให้รองรับมือถือ (ถ้าจอเล็กให้กลับมาอยู่ด้านล่าง) */
+        @media (max-width: 1024px) {
+            .admin-sidebar {
+                position: relative;
+                right: auto;
+                top: auto;
+                transform: none;
+                width: 100%;
+                margin-top: 50px;
+                padding-bottom: 100px;
+            }
+        }
+        /* เพิ่มใน <style> */
+        @keyframes dropIn {
+            from { opacity: 0; transform: translateY(-20px) scale(0.9); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .member-card {
+            animation: dropIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-overlay"></div>
+    <div class="bg-gradient-animate"></div>
+
+    <header class="py-12 text-center">
+    <h1 class="text-3xl font-extralight tracking-[1.5rem] uppercase italic">GANG LINEUP</h1>
+    <p id="total-members" class="text-[10px] tracking-[0.3em] text-white/30 mt-2">TOTAL MEMBERS: 0</p>
+    </header>
+
+    <main class="container mx-auto px-4 max-w-4xl border-x border-white/5">
+        
+        <section id="front" class="pitch-zone border-t-0" data-label="— ATTACK —">
+    <div class="flex flex-wrap justify-center gap-6 member-list min-h-[120px] pt-4">
+        </div>
+</section>
+
+<section class="pitch-zone relative overflow-hidden" data-label="— CENTER —">
+    <div class="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none">
+        <div class="w-64 h-64 border-2 border-white rounded-full"></div>
+    </div>
+    
+    <div class="grid grid-cols-3 gap-8 relative z-10 pt-4">
+        <div id="left" class="member-list flex flex-col items-center gap-5"></div>
+        
+        <div id="center" class="member-list flex flex-col items-center gap-5 border-x border-white/10 px-4"></div>
+        
+        <div id="right" class="member-list flex flex-col items-center gap-5"></div>
+    </div>
+</section>
+
+<section id="back" class="pitch-zone border-b border-white/5" data-label="— SUPPORT —">
+    <div class="flex flex-wrap justify-center gap-6 member-list min-h-[120px] pt-4 pb-8">
+        </div>
+</section>
+
+        <div class="admin-sidebar">
+    <div class="glass-card p-8 rounded-3xl border border-white/10 backdrop-blur-2xl shadow-2xl">
+        <p class="text-[9px] text-center tracking-[0.4em] text-white/30 mb-8 uppercase">Manage Team</p>
+        <div class="space-y-6 text-center">
+            <input type="text" id="member-name" placeholder="ชื่อสมาชิก..." autocomplete="off"
+                class="w-full bg-transparent text-center text-xl outline-none placeholder:text-white/10 font-light border-b border-white/5 pb-2 focus:border-white transition">
+            
+            <select id="member-pos" class="w-full bg-black/50 text-[10px] uppercase tracking-[0.2em] p-3 rounded-xl border border-white/10 outline-none appearance-none text-center">
+                <option value="front">โซน: หน้า (ATTACK)</option>
+                <option value="left">โซน: ซ้าย (LEFT)</option>
+                <option value="center">โซน: กลาง (CENTER)</option>
+                <option value="right">โซน: ขวา (RIGHT)</option>
+                <option value="back">โซน: หลัง (SUPPORT)</option>
+            </select>
+
+            <button onclick="addMember()" class="w-full bg-white text-black py-4 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-gray-200 transition shadow-lg">
+                Add Member
+            </button>
+            <div class="flex justify-center my-12">
+            <div class="mt-8 pt-6 border-t border-white/5">
+    <button onclick="openClearModal()" class="w-full text-[8px] uppercase tracking-[0.4em] text-red-500/40 hover:text-red-500 hover:text-white transition border border-white/10 px-6 py-2 rounded-full">>
+        Reset All
+    </button>
+</div>
+        </div>
+
+        </div>
+    </div>
+</div>
+    </main>
+
+    <div id="notification-container"></div>
+
+    <div id="delete-modal" class="modal-overlay">
+        <div class="text-center">
+            <p class="text-[10px] uppercase tracking-widest text-white/50 mb-2">Remove Member</p>
+            <h3 id="target-name" class="text-3xl font-bold mb-10 tracking-tighter">NAME</h3>
+            <div class="flex gap-12 justify-center">
+                <button onclick="closeModal()" class="text-[9px] uppercase tracking-widest text-white/30 hover:text-white transition border border-white/10 px-6 py-2 rounded-full">Go Back</button>
+                <button id="confirm-delete-btn" class="text-[10px] uppercase tracking-widest text-red-500 hover:text-white transition border border-white/10 px-6 py-2 rounded-full">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="clear-all-modal" class="modal-overlay">
+        <div class="text-center">
+            <h3 class="text-xl font-bold mb-8 tracking-widest uppercase">Clear Entire Pitch?</h3>
+            <div class="flex flex-col gap-4 items-center">
+                <button onclick="clearAllData()" class="bg-white text-black px-16 py-3 text-[10px] font-bold uppercase tracking-widest">Wipe Data</button>
+                <button onclick="closeClearModal()" class="text-[10px] uppercase text-white/30 hover:text-white">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, deleteDoc, doc, getDocs, writeBatch } 
+        from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAvk7JEt3H2SQhn8Zs3sr6XaklJ78yfVI8",
+            authDomain: "story-24626.firebaseapp.com",
+            projectId: "story-24626",
+            storageBucket: "story-24626.firebasestorage.app",
+            messagingSenderId: "179493309639",
+            appId: "1:179493309639:web:c5c5abcfc08e8444a202e2"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const membersRef = collection(db, "members");
+
+        const showNotify = (msg) => {
+            const container = document.getElementById('notification-container');
+            const toast = document.createElement('div');
+            toast.className = `toast`;
+            toast.innerText = msg.toUpperCase();
+            container.appendChild(toast);
+            setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 500); }, 2000);
+        };
+
+            // ระบบป้องกันการเปิดดูโค้ดและเซฟหน้าเว็บ (อัปเดตใหม่)
+            document.addEventListener('keydown', function(e) {
+                // 1. ป้องกัน Ctrl + S (Save Page)
+                if ((e.ctrlKey || e.metaKey) && (e.key === 's' || e.key === 'S' || e.keyCode === 83)) {
+                    e.preventDefault();
+                    // showAlert("ไม่อนุญาตให้บันทึกหน้าเว็บ", "danger"); // เปิดใช้ถ้าต้องการให้แจ้งเตือน
+                    return false;
+                }
+
+                // 2. ป้องกัน F12 (DevTools)
+                if (e.key === 'F12' || e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+
+                // 3. ป้องกัน Ctrl + Shift + I / J / C (Inspect/Console)
+                if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C' || e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) {
+                    e.preventDefault();
+                    return false;
+                }
+
+                // 4. ป้องกัน Ctrl + U (View Source)
+                if ((e.ctrlKey || e.metaKey) && (e.key === 'u' || e.key === 'U' || e.keyCode === 85)) {
+                    e.preventDefault();
+                    return false;
+                }
+            }, false);
+
+            // 5. ป้องกันการคลิกขวา (Context Menu)
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+            }, false);
+
+        window.addMember = async () => {
+            const nameEl = document.getElementById('member-name');
+            const posEl = document.getElementById('member-pos');
+            if(!nameEl.value.trim()) return;
+            await addDoc(membersRef, { name: nameEl.value.trim(), position: posEl.value, createdAt: Date.now() });
+            showNotify("Member Added");
+            nameEl.value = '';
+        };
+
+        let deleteId = null;
+        window.deleteMember = (id, name) => {
+            deleteId = id;
+            document.getElementById('target-name').innerText = name;
+            document.getElementById('delete-modal').style.display = 'flex';
+        };
+
+        window.closeModal = () => document.getElementById('delete-modal').style.display = 'none';
+
+        document.getElementById('confirm-delete-btn').onclick = async () => {
+            if(deleteId) {
+                await deleteDoc(doc(db, "members", deleteId));
+                showNotify("Removed");
+                closeModal();
+            }
+        };
+
+        window.openClearModal = () => document.getElementById('clear-all-modal').style.display = 'flex';
+        window.closeClearModal = () => document.getElementById('clear-all-modal').style.display = 'none';
+        
+        window.clearAllData = async () => {
+            const snap = await getDocs(membersRef);
+            const batch = writeBatch(db);
+            snap.forEach(d => batch.delete(d.ref));
+            await batch.commit();
+            showNotify("Pitch Cleared");
+            closeClearModal();
+        };
+
+        onSnapshot(query(membersRef, orderBy("createdAt", "asc")), (snap) => {
+            document.querySelectorAll('.member-list').forEach(el => el.innerHTML = '');
+            document.getElementById('total-members').innerText = `TOTAL MEMBERS: ${snap.size}`;
+            snap.forEach(d => {
+                const data = d.data();
+                const item = `
+                    <div onclick="deleteMember('${d.id}', '${data.name}')" class="member-card w-32 py-3 px-2 rounded-sm text-center">
+                        <p class="font-medium text-[10px] tracking-widest uppercase">${data.name}</p>
+                    </div>
+                `;
+                const list = document.querySelector(`#${data.position}.member-list`) || document.querySelector(`#${data.position} .member-list`);
+                if(list) list.innerHTML += item;
+            });
+        });
+    </script>
+</body>
+</html>
